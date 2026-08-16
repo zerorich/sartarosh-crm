@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { AdminLayout } from "@/widgets/admin-layout/AdminLayout";
 import { DataTable, Column } from "@/shared/ui/DataTable";
@@ -10,9 +10,10 @@ import { Button } from "@/shared/ui/Button";
 import { UserAvatar } from "@/shared/ui/UserAvatar";
 import { BarberRating } from "@/entities/barber/ui/BarberRating";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
-import { Barber, BarberStatus } from "@/entities/barber/model/types";
+import { Barber } from "@/entities/barber/model/types";
 import { useBarbersQuery } from "@/entities/barber/api/barber.queries";
 import { formatCurrency, formatPhone } from "@/shared/lib/utils";
+import { useDebounce } from "@/shared/hooks/useDebounce";
 import { Scissors, Eye, Building2, CalendarCheck } from "lucide-react";
 
 export function BarbersPage() {
@@ -20,11 +21,19 @@ export function BarbersPage() {
   const [status, setStatus] = useState<string>("ALL");
   const [page, setPage] = useState(1);
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const { data, isLoading, isError, error, refetch } = useBarbersQuery({
     page,
     limit: 20,
-    status: status === "ALL" ? undefined : (status as BarberStatus),
+    search: debouncedSearch || undefined,
   });
+
+  const filteredItems = useMemo(() => {
+    const items = data?.items ?? [];
+    if (status === "ALL") return items;
+    return items.filter((barber) => barber.status === status);
+  }, [data?.items, status]);
 
   const columns: Column<Barber>[] = [
     {
@@ -170,7 +179,7 @@ export function BarbersPage() {
       {/* Data Table */}
       <DataTable
         columns={columns}
-        data={data?.items || []}
+        data={filteredItems}
         keyExtractor={(b) => b.id}
         isLoading={isLoading}
         isError={isError}

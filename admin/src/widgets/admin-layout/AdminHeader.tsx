@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Menu,
   Bell,
@@ -15,17 +16,39 @@ import {
 } from "lucide-react";
 import { UserAvatar } from "@/shared/ui/UserAvatar";
 import { useToast } from "@/shared/hooks/useToast";
+import { clearSession, type AdminUser } from "@/shared/lib/session";
+import { formatPhone } from "@/shared/lib/utils";
 
 export interface AdminHeaderProps {
   onMobileMenuToggle: () => void;
+  currentUser: AdminUser;
 }
 
-export function AdminHeader({ onMobileMenuToggle }: AdminHeaderProps) {
+function getDisplayName(user: AdminUser): string {
+  const parts = [user.firstName, user.lastName].filter(Boolean);
+  return parts.length > 0 ? parts.join(" ") : user.phone;
+}
+
+function getRoleLabel(role: string): string {
+  if (role === "SUPER_ADMIN") return "Super Administrator";
+  if (role === "ADMIN") return "Administrator";
+  return role;
+}
+
+export function AdminHeader({
+  onMobileMenuToggle,
+  currentUser,
+}: AdminHeaderProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const { info } = useToast();
+  const router = useRouter();
+
+  const displayName = getDisplayName(currentUser);
+  const roleLabel = getRoleLabel(currentUser.role);
+  const formattedPhone = formatPhone(currentUser.phone);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -41,8 +64,10 @@ export function AdminHeader({ onMobileMenuToggle }: AdminHeaderProps) {
   }, []);
 
   const handleLogout = () => {
+    clearSession();
     info("Signed out", "You have been logged out of the CutZone Admin Panel.");
     setIsProfileOpen(false);
+    router.push("/login");
   };
 
   return (
@@ -138,17 +163,17 @@ export function AdminHeader({ onMobileMenuToggle }: AdminHeaderProps) {
             className="flex items-center gap-3 p-1.5 pr-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <UserAvatar
-              firstName="Javodbek"
-              lastName="Ergashev"
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+              firstName={currentUser.firstName}
+              lastName={currentUser.lastName}
+              src={currentUser.avatarUrl}
               size="sm"
               statusDot="online"
             />
             <div className="hidden md:block text-left">
               <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                Javodbek Ergashev
+                {displayName}
               </p>
-              <p className="text-[10px] font-medium text-slate-400">Super Administrator</p>
+              <p className="text-[10px] font-medium text-slate-400">{roleLabel}</p>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
           </button>
@@ -157,12 +182,12 @@ export function AdminHeader({ onMobileMenuToggle }: AdminHeaderProps) {
             <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-dropdown border border-slate-200 dark:border-slate-800 py-1.5 z-40 animate-in fade-in zoom-in-95">
               <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
                 <p className="text-xs font-bold text-slate-900 dark:text-white">Signed in as</p>
-                <p className="text-xs text-slate-500 truncate">+998 90 123 45 67</p>
+                <p className="text-xs text-slate-500 truncate">{formattedPhone}</p>
               </div>
 
               <div className="py-1">
                 <Link
-                  href="/admin/users/usr-001"
+                  href={`/admin/users/${currentUser.id}`}
                   onClick={() => setIsProfileOpen(false)}
                   className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 >

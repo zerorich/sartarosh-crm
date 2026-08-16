@@ -1,10 +1,4 @@
 export type ComplaintStatus = "OPEN" | "IN_REVIEW" | "RESOLVED" | "REJECTED";
-export type ComplaintCategory =
-  | "BARBER_LATE"
-  | "SERVICE_QUALITY"
-  | "PAYMENT"
-  | "SALON"
-  | "OTHER";
 
 export interface Complaint {
   id: string;
@@ -22,16 +16,7 @@ export interface Complaint {
     phone?: string | null;
     address?: string;
   } | null;
-  barberId?: string | null;
-  barber?: {
-    id: string;
-    user: {
-      firstName: string | null;
-      lastName: string | null;
-    };
-  } | null;
   bookingId?: string | null;
-  category?: ComplaintCategory;
   subject: string;
   body: string;
   status: ComplaintStatus;
@@ -44,12 +29,10 @@ export interface Complaint {
 export interface ComplaintListParams {
   page?: number;
   limit?: number;
-  status?: string;
-  category?: string;
-  search?: string;
+  status?: ComplaintStatus;
 }
 
 export interface UpdateComplaintPayload {
-  status: ComplaintStatus;
+  status?: ComplaintStatus;
   adminNote?: string;
 }

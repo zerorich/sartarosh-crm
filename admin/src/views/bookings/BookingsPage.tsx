@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { AdminLayout } from "@/widgets/admin-layout/AdminLayout";
 import { DataTable, Column } from "@/shared/ui/DataTable";
@@ -25,8 +25,24 @@ export function BookingsPage() {
     page,
     limit: 20,
     status: status === "ALL" ? undefined : status,
-    search: debouncedSearch || undefined,
   });
+
+  const filteredItems = useMemo(() => {
+    const items = data?.items ?? [];
+    if (!debouncedSearch) return items;
+
+    const q = debouncedSearch.toLowerCase();
+    return items.filter(
+      (b) =>
+        b.id.toLowerCase().includes(q) ||
+        b.client.phone.includes(q) ||
+        b.client.firstName?.toLowerCase().includes(q) ||
+        b.client.lastName?.toLowerCase().includes(q) ||
+        b.salon.name.toLowerCase().includes(q) ||
+        b.barber.user.firstName?.toLowerCase().includes(q) ||
+        b.barber.user.lastName?.toLowerCase().includes(q)
+    );
+  }, [data?.items, debouncedSearch]);
 
   const columns: Column<Booking>[] = [
     {
@@ -190,7 +206,7 @@ export function BookingsPage() {
       {/* Main Table */}
       <DataTable
         columns={columns}
-        data={data?.items || []}
+        data={filteredItems}
         keyExtractor={(b) => b.id}
         isLoading={isLoading}
         isError={isError}

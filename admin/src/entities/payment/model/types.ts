@@ -29,5 +29,4 @@ export interface PaymentListParams {
   page?: number;
   limit?: number;
   status?: string;
-  search?: string;
 }

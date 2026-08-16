@@ -11,9 +11,10 @@ export const PAYMENT_KEYS = {
 };
 
 export function usePaymentsQuery(params: PaymentListParams = { page: 1, limit: 20 }) {
+  const { page, limit, status } = params;
   return useQuery<PaginatedResult<Payment>>({
     queryKey: PAYMENT_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<Payment>>("/admin/payments", params as any),
+    queryFn: () => api.get<PaginatedResult<Payment>>("/admin/payments", { page, limit, status }),
   });
 }
 

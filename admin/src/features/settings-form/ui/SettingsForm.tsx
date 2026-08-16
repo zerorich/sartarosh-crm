@@ -10,18 +10,16 @@ import { Button } from "@/shared/ui/Button";
 import { AdminSettings } from "@/entities/setting/model/types";
 import { useUpdateAdminSettingsMutation } from "@/entities/setting/api/setting.queries";
 import { useToast } from "@/shared/hooks/useToast";
-import { Sliders, Bell, ShieldAlert, CheckCircle2, CalendarCheck, MapPin } from "lucide-react";
+import { Sliders, Bell, ShieldAlert, CheckCircle2, MapPin } from "lucide-react";
 
 const settingsSchema = z.object({
-  noShowLimit: z.coerce.number().min(1, "Minimum 1").max(10, "Maximum 10"),
-  noShowRestrictionDays: z.coerce.number().min(1, "Minimum 1").max(90, "Maximum 90"),
-  barberDelayThreshold: z.coerce.number().min(1, "Minimum 1 min").max(60, "Maximum 60 mins"),
+  noShowLimit: z.coerce.number().min(1, "Minimum 1").max(20, "Maximum 20"),
+  noShowRestrictionDays: z.coerce.number().min(1, "Minimum 1").max(365, "Maximum 365"),
+  barberDelayThreshold: z.coerce.number().min(1, "Minimum 1 min").max(120, "Maximum 120 mins"),
   barberDelayCompensationPercent: z.coerce.number().min(0, "Minimum 0%").max(100, "Maximum 100%"),
   couponExpirationDays: z.coerce.number().min(1, "Minimum 1 day").max(365, "Maximum 365 days"),
-  reviewEditWindow: z.coerce.number().min(1, "Minimum 1 hr").max(168, "Maximum 168 hrs"),
+  reviewEditWindow: z.coerce.number().min(1, "Minimum 1 hr").max(720, "Maximum 720 hrs"),
   defaultSearchRadius: z.coerce.number().min(1, "Minimum 1 km").max(100, "Maximum 100 km"),
-  cancellationWindowHours: z.coerce.number().min(0, "Minimum 0").max(72, "Maximum 72 hrs").optional(),
-  defaultDepositPercent: z.coerce.number().min(0, "Minimum 0%").max(100, "Maximum 100%").optional(),
   reminder24hEnabled: z.boolean(),
   reminder30mEnabled: z.boolean(),
 });
@@ -41,14 +39,12 @@ export function SettingsForm({ settings }: { settings: AdminSettings }) {
     resolver: zodResolver(settingsSchema) as any,
     defaultValues: {
       noShowLimit: settings.noShowLimit ?? 3,
-      noShowRestrictionDays: settings.noShowRestrictionDays ?? 7,
+      noShowRestrictionDays: settings.noShowRestrictionDays ?? 14,
       barberDelayThreshold: settings.barberDelayThreshold ?? 5,
       barberDelayCompensationPercent: settings.barberDelayCompensationPercent ?? 10,
       couponExpirationDays: settings.couponExpirationDays ?? 30,
       reviewEditWindow: settings.reviewEditWindow ?? 48,
-      defaultSearchRadius: settings.defaultSearchRadius ?? 5,
-      cancellationWindowHours: settings.cancellationWindowHours ?? 24,
-      defaultDepositPercent: settings.defaultDepositPercent ?? 25,
+      defaultSearchRadius: settings.defaultSearchRadius ?? 10,
       reminder24hEnabled: settings.reminder24hEnabled ?? true,
       reminder30mEnabled: settings.reminder30mEnabled ?? true,
     },
@@ -57,14 +53,12 @@ export function SettingsForm({ settings }: { settings: AdminSettings }) {
   useEffect(() => {
     reset({
       noShowLimit: settings.noShowLimit ?? 3,
-      noShowRestrictionDays: settings.noShowRestrictionDays ?? 7,
+      noShowRestrictionDays: settings.noShowRestrictionDays ?? 14,
       barberDelayThreshold: settings.barberDelayThreshold ?? 5,
       barberDelayCompensationPercent: settings.barberDelayCompensationPercent ?? 10,
       couponExpirationDays: settings.couponExpirationDays ?? 30,
       reviewEditWindow: settings.reviewEditWindow ?? 48,
-      defaultSearchRadius: settings.defaultSearchRadius ?? 5,
-      cancellationWindowHours: settings.cancellationWindowHours ?? 24,
-      defaultDepositPercent: settings.defaultDepositPercent ?? 25,
+      defaultSearchRadius: settings.defaultSearchRadius ?? 10,
       reminder24hEnabled: settings.reminder24hEnabled ?? true,
       reminder30mEnabled: settings.reminder30mEnabled ?? true,
     });
@@ -153,36 +147,7 @@ export function SettingsForm({ settings }: { settings: AdminSettings }) {
         </CardBody>
       </Card>
 
-      {/* 3. Booking & Deposit Policies */}
-      <Card>
-        <CardHeader
-          title={
-            <div className="flex items-center gap-2">
-              <CalendarCheck className="w-5 h-5 text-emerald-500" />
-              <span>Booking & Deposit Policies</span>
-            </div>
-          }
-          subtitle="Configure default cancellation policies and mandatory online deposit percentages."
-        />
-        <CardBody className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Free Cancellation Window (Hours: 24h)"
-            type="number"
-            helperText="Hours prior to start time when booking cancellation is fully refundable."
-            error={errors.cancellationWindowHours?.message}
-            {...register("cancellationWindowHours")}
-          />
-          <Input
-            label="Default Deposit Rate (%: 25%)"
-            type="number"
-            helperText="Standard percentage required upfront to confirm appointment booking."
-            error={errors.defaultDepositPercent?.message}
-            {...register("defaultDepositPercent")}
-          />
-        </CardBody>
-      </Card>
-
-      {/* 4. Geolocation & Map Search */}
+      {/* 3. Geolocation & Map Search */}
       <Card>
         <CardHeader
           title={
@@ -195,7 +160,7 @@ export function SettingsForm({ settings }: { settings: AdminSettings }) {
         />
         <CardBody className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
-            label="Default Search Radius (KM: 5 km)"
+            label="Default Search Radius (KM: 10 km)"
             type="number"
             helperText="Initial geolocation discovery radius on the CutZone customer map."
             error={errors.defaultSearchRadius?.message}
@@ -204,7 +169,7 @@ export function SettingsForm({ settings }: { settings: AdminSettings }) {
         </CardBody>
       </Card>
 
-      {/* 5. Automated Reminders & Push Alerts */}
+      {/* 4. Automated Reminders & Push Alerts */}
       <Card>
         <CardHeader
           title={

@@ -11,9 +11,10 @@ export const BARBER_KEYS = {
 };
 
 export function useBarbersQuery(params: BarberListParams = { page: 1, limit: 20 }) {
+  const { page, limit, search, salonId } = params;
   return useQuery<PaginatedResult<Barber>>({
     queryKey: BARBER_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<Barber>>("/admin/barbers", params as any),
+    queryFn: () => api.get<PaginatedResult<Barber>>("/admin/barbers", { page, limit, search, salonId }),
   });
 }
 

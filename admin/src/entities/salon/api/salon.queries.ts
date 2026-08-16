@@ -11,9 +11,10 @@ export const SALON_KEYS = {
 };
 
 export function useSalonsQuery(params: SalonListParams = { page: 1, limit: 20 }) {
+  const { page, limit, status } = params;
   return useQuery<PaginatedResult<Salon>>({
     queryKey: SALON_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<Salon>>("/admin/salons", params as any),
+    queryFn: () => api.get<PaginatedResult<Salon>>("/admin/salons", { page, limit, status }),
   });
 }
 
@@ -29,8 +30,7 @@ export function useApproveSalonMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (salonId: string) =>
-      api.patch<Salon>(`/admin/salons/${salonId}/approve`, {}),
+    mutationFn: (salonId: string) => api.patch<Salon>(`/admin/salons/${salonId}/approve`),
     onSuccess: (updatedSalon, salonId) => {
       queryClient.invalidateQueries({ queryKey: SALON_KEYS.lists() });
       queryClient.setQueryData(SALON_KEYS.detail(salonId), updatedSalon);

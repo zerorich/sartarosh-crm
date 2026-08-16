@@ -9,9 +9,10 @@ export const REVIEW_KEYS = {
 };
 
 export function useReviewsQuery(params: ReviewListParams = { page: 1, limit: 20 }) {
+  const { page, limit, includeHidden } = params;
   return useQuery<PaginatedResult<Review>>({
     queryKey: REVIEW_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<Review>>("/admin/reviews", params as any),
+    queryFn: () => api.get<PaginatedResult<Review>>("/admin/reviews", { page, limit, includeHidden }),
   });
 }
 
@@ -19,8 +20,7 @@ export function useHideReviewMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (reviewId: string) =>
-      api.patch<Review>(`/admin/reviews/${reviewId}/hide`, {}),
+    mutationFn: (reviewId: string) => api.patch<Review>(`/admin/reviews/${reviewId}/hide`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.all });
     },
@@ -31,8 +31,7 @@ export function useRestoreReviewMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (reviewId: string) =>
-      api.patch<Review>(`/admin/reviews/${reviewId}/restore`, {}),
+    mutationFn: (reviewId: string) => api.patch<Review>(`/admin/reviews/${reviewId}/restore`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.all });
     },

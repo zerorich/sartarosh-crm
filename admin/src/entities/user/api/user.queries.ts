@@ -11,9 +11,10 @@ export const USER_KEYS = {
 };
 
 export function useUsersQuery(params: UserListParams = { page: 1, limit: 20 }) {
+  const { page, limit, role, search } = params;
   return useQuery<PaginatedResult<User>>({
     queryKey: USER_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<User>>("/admin/users", params as any),
+    queryFn: () => api.get<PaginatedResult<User>>("/admin/users", { page, limit, role, search }),
   });
 }
 
@@ -42,8 +43,7 @@ export function useUnblockUserMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userId: string) =>
-      api.patch<User>(`/admin/users/${userId}/unblock`, {}),
+    mutationFn: (userId: string) => api.patch<User>(`/admin/users/${userId}/unblock`),
     onSuccess: (updatedUser, userId) => {
       queryClient.invalidateQueries({ queryKey: USER_KEYS.lists() });
       queryClient.setQueryData(USER_KEYS.detail(userId), updatedUser);

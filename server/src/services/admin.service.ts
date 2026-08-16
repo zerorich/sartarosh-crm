@@ -237,6 +237,26 @@ export async function listPayments(params: { page: number; limit: number; status
   return { items, page: params.page, limit: params.limit, total };
 }
 
+export async function getPaymentById(paymentId: string) {
+  const payment = await prisma.payment.findUnique({
+    where: { id: paymentId },
+    include: {
+      booking: {
+        select: {
+          id: true,
+          startAt: true,
+          price: true,
+          salon: { select: { id: true, name: true, address: true, phone: true } },
+          client: { select: { id: true, phone: true, firstName: true, lastName: true } },
+        },
+      },
+    },
+  });
+
+  if (!payment) throw AppError.notFound("Payment not found");
+  return payment;
+}
+
 export async function listReviews(params: { page: number; limit: number; includeHidden?: boolean }) {
   const where: Prisma.ReviewWhereInput = {};
   if (!params.includeHidden) where.isHidden = false;

@@ -161,11 +161,7 @@ export function ComplaintDetailPage() {
                   <span>Complaint Subject & Statement</span>
                 </div>
               }
-              subtitle={
-                complaint.category
-                  ? `Category: ${complaint.category.replace("_", " ")}`
-                  : "Category: General Dispute"
-              }
+              subtitle="Category: General Dispute"
             />
             <CardBody className="space-y-4">
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-2">

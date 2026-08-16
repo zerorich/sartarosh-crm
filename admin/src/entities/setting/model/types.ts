@@ -7,9 +7,6 @@ export interface AdminSettings {
   couponExpirationDays: number;
   reviewEditWindow: number;
   defaultSearchRadius: number;
-  cancellationWindowHours?: number;
-  defaultDepositPercent?: number;
-  allowInstantBooking?: boolean;
   reminder24hEnabled: boolean;
   reminder30mEnabled: boolean;
   updatedAt: string;

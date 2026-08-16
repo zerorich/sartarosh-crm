@@ -27,6 +27,6 @@ export interface Barber {
 export interface BarberListParams {
   page?: number;
   limit?: number;
-  status?: BarberStatus;
+  search?: string;
   salonId?: string;
 }

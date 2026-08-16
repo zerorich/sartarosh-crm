@@ -11,9 +11,10 @@ export const COMPLAINT_KEYS = {
 };
 
 export function useComplaintsQuery(params: ComplaintListParams = { page: 1, limit: 20 }) {
+  const { page, limit, status } = params;
   return useQuery<PaginatedResult<Complaint>>({
     queryKey: COMPLAINT_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<Complaint>>("/admin/complaints", params as any),
+    queryFn: () => api.get<PaginatedResult<Complaint>>("/admin/complaints", { page, limit, status }),
   });
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { AdminLayout } from "@/widgets/admin-layout/AdminLayout";
 import { DataTable, Column } from "@/shared/ui/DataTable";
@@ -25,8 +25,22 @@ export function PaymentsPage() {
     page,
     limit: 20,
     status: status === "ALL" ? undefined : status,
-    search: debouncedSearch || undefined,
   });
+
+  const filteredItems = useMemo(() => {
+    const items = data?.items ?? [];
+    if (!debouncedSearch) return items;
+
+    const q = debouncedSearch.toLowerCase();
+    return items.filter(
+      (p) =>
+        p.id.toLowerCase().includes(q) ||
+        p.bookingId.toLowerCase().includes(q) ||
+        p.providerRef?.toLowerCase().includes(q) ||
+        p.booking?.client?.phone.includes(q) ||
+        p.booking?.salon?.name.toLowerCase().includes(q)
+    );
+  }, [data?.items, debouncedSearch]);
 
   const columns: Column<Payment>[] = [
     {
@@ -168,7 +182,7 @@ export function PaymentsPage() {
       {/* Main Table */}
       <DataTable
         columns={columns}
-        data={data?.items || []}
+        data={filteredItems}
         keyExtractor={(p) => p.id}
         isLoading={isLoading}
         isError={isError}

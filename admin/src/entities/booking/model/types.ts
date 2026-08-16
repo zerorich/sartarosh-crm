@@ -82,5 +82,4 @@ export interface BookingListParams {
   limit?: number;
   status?: string;
   salonId?: string;
-  search?: string;
 }

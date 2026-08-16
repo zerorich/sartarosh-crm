@@ -11,9 +11,11 @@ export const BOOKING_KEYS = {
 };
 
 export function useBookingsQuery(params: BookingListParams = { page: 1, limit: 20 }) {
+  const { page, limit, status, salonId } = params;
   return useQuery<PaginatedResult<Booking>>({
     queryKey: BOOKING_KEYS.list(params),
-    queryFn: () => api.get<PaginatedResult<Booking>>("/admin/bookings", params as any),
+    queryFn: () =>
+      api.get<PaginatedResult<Booking>>("/admin/bookings", { page, limit, status, salonId }),
   });
 }
 

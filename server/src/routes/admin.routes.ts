@@ -5,6 +5,7 @@ import {
   getBarbers,
   getBooking,
   getBookings,
+  getPayment,
   getPayments,
   getReviews,
   getSalon,
@@ -332,6 +333,25 @@ adminRouter.get("/bookings/:id", validate(adminIdParamSchema, "params"), getBook
  *               $ref: '#/components/schemas/Paginated'
  */
 adminRouter.get("/payments", validate(adminPaymentListQuerySchema, "query"), getPayments);
+
+/**
+ * @openapi
+ * /api/admin/payments/{id}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get payment by id
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Payment
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+adminRouter.get("/payments/:id", validate(adminIdParamSchema, "params"), getPayment);
 
 /**
  * @openapi

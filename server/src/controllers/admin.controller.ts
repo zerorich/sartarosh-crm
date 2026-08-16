@@ -8,6 +8,7 @@ import {
   getAdminSettings,
   getBarberById,
   getBookingById,
+  getPaymentById,
   getReports,
   getSalonById,
   getUserById,
@@ -116,6 +117,11 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
     status: query.status,
   });
   return paginated(res, result);
+});
+
+export const getPayment = asyncHandler(async (req: Request, res: Response) => {
+  const payment = await getPaymentById(routeParam(req));
+  return ok(res, payment);
 });
 
 export const getReviews = asyncHandler(async (req: Request, res: Response) => {

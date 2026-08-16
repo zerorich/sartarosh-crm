@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { AdminLayout } from "@/widgets/admin-layout/AdminLayout";
 import { DataTable, Column } from "@/shared/ui/DataTable";
@@ -8,7 +8,7 @@ import { SearchInput } from "@/shared/ui/SearchInput";
 import { FilterDropdown } from "@/shared/ui/FilterDropdown";
 import { Button } from "@/shared/ui/Button";
 import { ComplaintStatusBadge } from "@/entities/complaint/ui/ComplaintStatusBadge";
-import { Complaint } from "@/entities/complaint/model/types";
+import { Complaint, ComplaintStatus } from "@/entities/complaint/model/types";
 import { useComplaintsQuery } from "@/entities/complaint/api/complaint.queries";
 import { formatDate, formatPhone } from "@/shared/lib/utils";
 import { useDebounce } from "@/shared/hooks/useDebounce";
@@ -25,10 +25,26 @@ export function ComplaintsPage() {
   const { data, isLoading, isError, error, refetch } = useComplaintsQuery({
     page,
     limit: 20,
-    status: status === "ALL" ? undefined : status,
-    category: category === "ALL" ? undefined : category,
-    search: debouncedSearch || undefined,
+    status: status === "ALL" ? undefined : (status as ComplaintStatus),
   });
+
+  const filteredItems = useMemo(() => {
+    let items = data?.items ?? [];
+
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
+      items = items.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.subject.toLowerCase().includes(q) ||
+          c.client.phone.includes(q) ||
+          c.client.firstName?.toLowerCase().includes(q) ||
+          c.client.lastName?.toLowerCase().includes(q)
+      );
+    }
+
+    return items;
+  }, [data?.items, debouncedSearch]);
 
   const columns: Column<Complaint>[] = [
     {
@@ -56,7 +72,7 @@ export function ComplaintsPage() {
           </Link>
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-              {c.category ? c.category.replace("_", " ") : "GENERAL"}
+              GENERAL
             </span>
             {c.bookingId && (
               <span className="text-[10px] text-slate-400 font-mono">
@@ -196,7 +212,7 @@ export function ComplaintsPage() {
       {/* Main Table */}
       <DataTable
         columns={columns}
-        data={data?.items || []}
+        data={filteredItems}
         keyExtractor={(c) => c.id}
         isLoading={isLoading}
         isError={isError}
