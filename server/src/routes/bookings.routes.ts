@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getBooking,
   getBookings,
+  getQuote,
   postArrive,
   postBooking,
   postCancel,
@@ -19,6 +20,7 @@ import {
   cancelBookingSchema,
   createBookingSchema,
   listBookingsQuerySchema,
+  quoteBookingQuerySchema,
 } from "../validators/booking.validator";
 
 export const bookingsRouter = Router();
@@ -82,6 +84,35 @@ bookingsRouter.post(
 );
 
 bookingsRouter.get("/", validate(listBookingsQuerySchema, "query"), asyncHandler(getBookings));
+
+/**
+ * @openapi
+ * /api/bookings/quote:
+ *   get:
+ *     tags: [Booking]
+ *     summary: Preview price/deposit for a salon+service(+coupon) without creating a booking
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - name: salonId
+ *         in: query
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *       - name: serviceId
+ *         in: query
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *       - name: couponId
+ *         in: query
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Price quote
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+bookingsRouter.get("/quote", validate(quoteBookingQuerySchema, "query"), asyncHandler(getQuote));
 
 /**
  * @openapi

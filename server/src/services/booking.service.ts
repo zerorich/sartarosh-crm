@@ -177,6 +177,54 @@ export async function createBooking(input: CreateBookingInput) {
   return serializeBooking(booking);
 }
 
+export interface QuoteBookingInput {
+  clientId: string;
+  salonId: string;
+  serviceId: string;
+  couponId?: string;
+}
+
+/**
+ * Same price/deposit math as createBooking, without writing a Booking row —
+ * lets the client show an accurate summary before the user confirms,
+ * instead of reimplementing the deposit/coupon formulas on the frontend.
+ */
+export async function quoteBookingPrice(input: QuoteBookingInput) {
+  const salon = await prisma.salon.findUnique({ where: { id: input.salonId } });
+  if (!salon) throw AppError.notFound("Salon not found");
+  if (salon.status !== "ACTIVE") {
+    throw AppError.badRequest("Salon is not active", ERROR_CODES.SALON_NOT_ACTIVE);
+  }
+
+  const service = await prisma.service.findFirst({
+    where: { id: input.serviceId, salonId: input.salonId },
+  });
+  if (!service) throw AppError.notFound("Service not found");
+  if (!service.isActive) {
+    throw AppError.badRequest("Service is inactive", ERROR_CODES.SERVICE_INACTIVE);
+  }
+
+  let couponRecord: Awaited<ReturnType<typeof validateCouponForBooking>> | null = null;
+  if (input.couponId) {
+    couponRecord = await validateCouponForBooking(input.couponId, input.clientId, input.salonId);
+  }
+
+  const basePrice = toNumber(service.price);
+  const finalPrice = couponRecord ? computeDiscountedPrice(basePrice, couponRecord) : basePrice;
+  const { depositAmount, remainingAmount } = calculateDeposit(
+    finalPrice,
+    salon.depositType,
+    toNumber(salon.depositValue),
+  );
+
+  return {
+    price: roundMoney(finalPrice),
+    depositAmount: roundMoney(depositAmount),
+    remainingAmount: roundMoney(remainingAmount),
+    couponApplied: Boolean(couponRecord),
+  };
+}
+
 export async function getBookingById(id: string) {
   const booking = await prisma.booking.findUnique({
     where: { id },
