@@ -25,6 +25,24 @@ export async function getMe(userId: string) {
   return sanitizeUser(user);
 }
 
+export interface UpdateMeInput {
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string | null;
+}
+
+export async function updateMe(userId: string, input: UpdateMeInput) {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      ...(input.firstName !== undefined ? { firstName: input.firstName } : {}),
+      ...(input.lastName !== undefined ? { lastName: input.lastName } : {}),
+      ...(input.avatarUrl !== undefined ? { avatarUrl: input.avatarUrl } : {}),
+    },
+  });
+  return sanitizeUser(user);
+}
+
 export async function getMyReviews(clientId: string) {
   return prisma.review.findMany({
     where: { clientId, isHidden: false },

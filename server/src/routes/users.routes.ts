@@ -5,11 +5,12 @@ import {
   getMyCoupons,
   getMyReviews,
   getMySavedSalons,
+  patchMe,
   putSavedSalon,
 } from "../controllers/user.controller";
 import { authenticate } from "../middleware/authenticate";
 import { validate } from "../middleware/validate";
-import { savedSalonParamSchema } from "../validators/user.validator";
+import { savedSalonParamSchema, updateMeSchema } from "../validators/user.validator";
 
 export const usersRouter = Router();
 
@@ -31,6 +32,32 @@ usersRouter.use(authenticate);
  *               $ref: '#/components/schemas/Success'
  */
 usersRouter.get("/me", getMe);
+
+/**
+ * @openapi
+ * /api/users/me:
+ *   patch:
+ *     tags: [Users]
+ *     summary: Update current authenticated user's profile (name, avatar)
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName: { type: string }
+ *               lastName: { type: string }
+ *               avatarUrl: { type: string, nullable: true }
+ *     responses:
+ *       200:
+ *         description: Updated user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+usersRouter.patch("/me", validate(updateMeSchema), patchMe);
 
 /**
  * @openapi

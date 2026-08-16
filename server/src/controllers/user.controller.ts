@@ -9,6 +9,11 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
   return ok(res, me);
 });
 
+export const patchMe = asyncHandler(async (req: Request, res: Response) => {
+  const me = await userService.updateMe(req.user!.id, req.body);
+  return ok(res, me);
+});
+
 export const getMyCoupons = asyncHandler(async (req: Request, res: Response) => {
   const coupons = await userService.getMyCoupons(req.user!.id);
   return ok(res, coupons);
