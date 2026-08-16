@@ -1,0 +1,12 @@
+{
+  "name": "cutzone-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix admin",
+    "dev:admin": "npm run dev --prefix admin",
+    "dev:server": "npm run dev --prefix server",
+    "build": "npm run build --prefix admin",
+    "build:admin": "npm run build --prefix admin"
+  }
+}
