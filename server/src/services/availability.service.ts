@@ -110,3 +110,91 @@ export async function lockBarberSlot(input: SlotInput, tx: Prisma.TransactionCli
   const lockKey = `${input.barberId}:${input.startAt.toISOString()}`;
   await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${lockKey}))`;
 }
+
+export interface AvailableSlotsInput {
+  salonId: string;
+  barberId: string;
+  serviceId: string;
+  date: Date;
+}
+
+export interface AvailableSlot {
+  startAt: string;
+  endAt: string;
+}
+
+const ACTIVE_STATUSES = ["PENDING", "CONFIRMED", "ARRIVED", "IN_PROGRESS"] as const;
+
+/**
+ * Enumerates bookable slots for a given calendar day, applying the same
+ * salon/barber-hours + blocked-time + overlap rules as assertSlotAvailable,
+ * so the client never has to reimplement scheduling logic itself.
+ */
+export async function getAvailableSlots(input: AvailableSlotsInput): Promise<AvailableSlot[]> {
+  const service = await prisma.service.findFirst({
+    where: { id: input.serviceId, salonId: input.salonId },
+  });
+  if (!service) throw AppError.notFound("Service not found");
+  if (!service.isActive) {
+    throw AppError.badRequest("Service is inactive", ERROR_CODES.SERVICE_INACTIVE);
+  }
+
+  const [salonHours, barberHours, salonBlocks, barberBlocks] = await Promise.all([
+    workingHourRepository.findBySalon(input.salonId),
+    workingHourRepository.findByBarber(input.barberId),
+    blockedTimeRepository.findBySalon(input.salonId),
+    blockedTimeRepository.findByBarber(input.barberId),
+  ]);
+
+  const dayOfWeek = input.date.getDay();
+  const salonDay = salonHours.filter((h) => h.dayOfWeek === dayOfWeek);
+  if (salonHours.length > 0 && salonDay.length === 0) return [];
+
+  const barberSchedule = barberHours.length > 0 ? barberHours : salonHours;
+  const barberDay = barberSchedule.filter((h) => h.dayOfWeek === dayOfWeek);
+  if (barberDay.length === 0) return [];
+
+  const dayStart = new Date(input.date);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const blocked = [...salonBlocks, ...barberBlocks];
+
+  const existingBookings = await prisma.booking.findMany({
+    where: {
+      barberId: input.barberId,
+      status: { in: [...ACTIVE_STATUSES] },
+      startAt: { lt: dayEnd },
+      endAt: { gt: dayStart },
+    },
+    select: { startAt: true, endAt: true },
+  });
+
+  const durationMs = service.durationMinutes * 60_000;
+  const slots: AvailableSlot[] = [];
+
+  for (const window of barberDay) {
+    const [startH, startM] = window.startTime.split(":").map(Number);
+    const [endH, endM] = window.endTime.split(":").map(Number);
+    const windowStart = new Date(dayStart);
+    windowStart.setHours(startH, startM, 0, 0);
+    const windowEnd = new Date(dayStart);
+    windowEnd.setHours(endH, endM, 0, 0);
+
+    for (
+      let slotStart = new Date(windowStart);
+      slotStart.getTime() + durationMs <= windowEnd.getTime();
+      slotStart = new Date(slotStart.getTime() + durationMs)
+    ) {
+      const slotEnd = new Date(slotStart.getTime() + durationMs);
+      if (slotStart <= now) continue;
+      if (salonHours.length > 0 && !slotWithinHours(salonDay, slotStart, slotEnd)) continue;
+      if (isBlocked(blocked, slotStart, slotEnd)) continue;
+      if (existingBookings.some((b) => slotStart < b.endAt && slotEnd > b.startAt)) continue;
+
+      slots.push({ startAt: slotStart.toISOString(), endAt: slotEnd.toISOString() });
+    }
+  }
+
+  return slots;
+}

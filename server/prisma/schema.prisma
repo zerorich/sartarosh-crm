@@ -170,6 +170,7 @@ model User {
   handledComplaints Complaint[] @relation("AdminComplaints")
   auditLogs      AuditLog[]
   salaries       Salary[]
+  savedSalons    SavedSalon[]
 
   @@index([phone])
   @@index([role])
@@ -244,6 +245,7 @@ model Salon {
   expenses       Expense[]
   salaries       Salary[]
   complaints     Complaint[]
+  savedBy        SavedSalon[]
 
   @@index([ownerId])
   @@index([status])
@@ -550,6 +552,19 @@ model AuditLog {
   @@index([action])
   @@index([entityType, entityId])
   @@index([createdAt])
+}
+
+model SavedSalon {
+  id        String   @id @default(uuid())
+  clientId  String
+  client    User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  salonId   String
+  salon     Salon    @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, salonId])
+  @@index([clientId])
+  @@index([salonId])
 }
 
 model RefreshToken {
