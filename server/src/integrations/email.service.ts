@@ -10,6 +10,10 @@ function hasResendCredentials(): boolean {
   return Boolean(env.RESEND_API_KEY);
 }
 
+function hasGmailWebhook(): boolean {
+  return Boolean(env.EMAIL_WEBHOOK_URL && env.EMAIL_WEBHOOK_SECRET);
+}
+
 function getSmtpFromAddress(): string {
   return env.SMTP_FROM || env.GMAIL_USER;
 }
@@ -60,6 +64,35 @@ function otpText(otp: string): string {
   return `Your Sartarosh verification code is ${otp}. It expires in a few minutes.`;
 }
 
+async function sendViaGmailWebhook(to: string, otp: string): Promise<void> {
+  const response = await fetch(env.EMAIL_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      secret: env.EMAIL_WEBHOOK_SECRET,
+      to,
+      subject: "Your Sartarosh verification code",
+      text: otpText(otp),
+      html: buildOtpHtml(otp),
+    }),
+    redirect: "follow",
+  });
+
+  const raw = await response.text().catch(() => "");
+  let parsed: { ok?: boolean; error?: string } | undefined;
+  try {
+    parsed = JSON.parse(raw) as { ok?: boolean; error?: string };
+  } catch {
+    parsed = undefined;
+  }
+
+  if (!response.ok || parsed?.ok !== true) {
+    throw new Error(
+      `[email] Gmail webhook HTTP ${response.status}${parsed?.error ? `: ${parsed.error}` : raw ? `: ${raw.slice(0, 200)}` : ""}`,
+    );
+  }
+}
+
 async function sendViaResend(to: string, otp: string): Promise<void> {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -82,7 +115,7 @@ async function sendViaResend(to: string, otp: string): Promise<void> {
   }
 }
 
-async function sendViaGmail(to: string, otp: string): Promise<void> {
+async function sendViaGmailSmtp(to: string, otp: string): Promise<void> {
   await getTransporter().sendMail({
     from: getSmtpFromAddress(),
     to,
@@ -93,6 +126,11 @@ async function sendViaGmail(to: string, otp: string): Promise<void> {
 }
 
 export async function sendOtpEmail(to: string, otp: string): Promise<void> {
+  if (hasGmailWebhook()) {
+    await sendViaGmailWebhook(to, otp);
+    return;
+  }
+
   if (hasResendCredentials()) {
     await sendViaResend(to, otp);
     return;
@@ -101,16 +139,16 @@ export async function sendOtpEmail(to: string, otp: string): Promise<void> {
   if (hasGmailCredentials()) {
     if (env.NODE_ENV === "production") {
       console.warn(
-        "[email] Using Gmail SMTP in production. Railway Hobby blocks ports 587/465 — set RESEND_API_KEY (HTTPS) if send fails.",
+        "[email] Using Gmail SMTP in production. Railway Hobby blocks ports 587/465 — set EMAIL_WEBHOOK_URL for Gmail-as-sender.",
       );
     }
-    await sendViaGmail(to, otp);
+    await sendViaGmailSmtp(to, otp);
     return;
   }
 
   if (env.NODE_ENV === "production") {
     const message =
-      "[email] Set RESEND_API_KEY (recommended on Railway) or GMAIL_USER + GMAIL_APP_PASSWORD; OTP was not sent";
+      "[email] Set EMAIL_WEBHOOK_URL (Gmail) or RESEND_API_KEY; OTP was not sent";
     console.error(`${message} (recipient=${to})`);
     throw new Error(message);
   }

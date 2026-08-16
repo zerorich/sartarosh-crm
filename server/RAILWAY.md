@@ -52,11 +52,13 @@
 | `OTP_MAX_ATTEMPTS` | `5` | Макс. попыток ввода OTP. |
 | `CORS_ORIGIN` | см. ниже | URL фронтендов через запятую, **без** `/api` и без trailing slash. |
 | `PUBLIC_URL` | `https://<ваш-railway-домен>` | Публичный URL **этого** API-сервиса (без `/api`). Для абсолютных ссылок `/uploads/*`. |
-| `RESEND_API_KEY` | `re_...` | **Обязательно на Hobby.** Railway блокирует исходящий SMTP; OTP уходит через HTTPS [Resend](https://resend.com/api-keys). |
-| `RESEND_FROM` | `Sartarosh <hello@yourdomain.com>` | Только **верифицированный** домен Resend. Пока домена нет — оставьте пустым (`onboarding@resend.dev`, письма только на email аккаунта Resend). |
-| `GMAIL_USER` | `your@gmail.com` | Для **локальной** разработки, или если сервис на плане **Pro** (SMTP открыт). |
-| `GMAIL_APP_PASSWORD` | *(App Password)* | [App Password](https://myaccount.google.com/apppasswords). На Hobby **не сработает**. |
-| `SMTP_FROM` | `Sartarosh <your@gmail.com>` | Отправитель Gmail SMTP. Если пусто — используется `GMAIL_USER`. |
+| `EMAIL_WEBHOOK_URL` | `https://script.google.com/macros/s/…/exec` | Google Apps Script web app — шлёт **как ваш Gmail** на любые адреса, без своего домена. См. §8. |
+| `EMAIL_WEBHOOK_SECRET` | случайная строка | Тот же секрет, что в Script properties веб-приложения. |
+| `RESEND_API_KEY` | `re_...` | Запасной HTTPS-канал. Без своего домена Resend пишет **только** на ваш email. |
+| `RESEND_FROM` | `Sartarosh <hello@yourdomain.com>` | Только верифицированный домен Resend. |
+| `GMAIL_USER` | `your@gmail.com` | Локальный SMTP; на Hobby в проде SMTP закрыт. |
+| `GMAIL_APP_PASSWORD` | *(App Password)* | Только локально, либо Railway **Pro**. |
+| `SMTP_FROM` | `Sartarosh <your@gmail.com>` | Отправитель Gmail SMTP. |
 | `STORAGE_URL` | *(пусто)* | Опционально. Можно оставить пустым — загрузки идут в локальную папку `uploads/`. |
 | `STORAGE_KEY` | *(пусто)* | Опционально. |
 | `STORAGE_SECRET` | `${{ secret() }}` или *(пусто)* | Опционально. Можно оставить пустым, если внешнее хранилище не используется. |
@@ -148,14 +150,18 @@ curl https://<ваш-домен>/health
 
 ## 8. OTP / почта на Railway
 
-На **Hobby** исходящий SMTP (`gmail:587/465`) **заблокирован**. Gmail App Password на проде не использовать.
+На **Hobby** SMTP к Gmail (`:587/:465`) закрыт, свой домен для Resend не обязателен.
 
-1. Заведите бесплатный ключ на [resend.com/api-keys](https://resend.com/api-keys).
-2. В Variables API-сервиса задайте `RESEND_API_KEY=re_...`.
-3. Чтобы слать OTP **любым** клиентам — подтвердите свой домен в Resend и задайте `RESEND_FROM=Sartarosh <hello@yourdomain.com>`.
-4. Пока домена нет, Resend шлёт только на email аккаунта Resend (удобно для проверки логина).
+**Рекомендуется: Google Apps Script** — письма уходят **от `zerorich207@gmail.com` на любой Gmail**. Скрипт: `server/scripts/gmail-otp-webhook.gs`.
 
-Локально по-прежнему работает `GMAIL_*`. SMTP Gmail на Railway появится только на плане **Pro**.
+1. https://script.google.com → New project, вставьте скрипт.
+2. Script properties: `WEBHOOK_SECRET` = значение `EMAIL_WEBHOOK_SECRET` в Railway.
+3. Deploy → Web app: Execute as **Me**, Who has access **Anyone**.
+4. URL вида `https://script.google.com/macros/s/…/exec` → `EMAIL_WEBHOOK_URL` в Railway.
+
+Лимит обычного Gmail через Apps Script: порядка 100 писем/сутки.
+
+Запасные варианты: Resend (только на свой email без домена) или план **Pro** + Gmail SMTP.
 
 ---
 

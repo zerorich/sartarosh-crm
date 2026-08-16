@@ -30,6 +30,10 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().optional().default(""),
   /** Verified Resend from, e.g. Sartarosh <hello@yourdomain.com>. Defaults to onboarding@resend.dev. */
   RESEND_FROM: z.string().optional().default(""),
+  /** Google Apps Script web-app URL that sends mail as GMAIL_USER (HTTPS, any recipient). */
+  EMAIL_WEBHOOK_URL: z.string().optional().default(""),
+  /** Shared secret for the Gmail Apps Script webhook. */
+  EMAIL_WEBHOOK_SECRET: z.string().optional().default(""),
   /** Base URL this API is reachable at — used to build absolute /uploads/* links. */
   PUBLIC_URL: z.string().default("http://localhost:4000"),
 });
