@@ -177,6 +177,46 @@ async function main() {
       status: SalonStatus.ACTIVE,
       coverUrl: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&h=500&fit=crop&q=70",
     },
+    {
+      name: "Chilonzor Barbers",
+      city: "Tashkent",
+      lat: 41.2856,
+      lng: 69.2034,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Yunusobod Fade Club",
+      city: "Tashkent",
+      lat: 41.3608,
+      lng: 69.2887,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Mirzo Ulugbek Barbershop",
+      city: "Tashkent",
+      lat: 41.3352,
+      lng: 69.3298,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Sergeli Style House",
+      city: "Tashkent",
+      lat: 41.2137,
+      lng: 69.2268,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Andijon Premium Barbers",
+      city: "Andijon",
+      lat: 40.7821,
+      lng: 72.3442,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1618886614638-80e3c103d31a?w=800&h=500&fit=crop&q=70",
+    },
   ];
 
   const salons = [];
@@ -236,11 +276,12 @@ async function main() {
     });
   }
 
+  const activeSalons = salons.filter((s) => s.status === SalonStatus.ACTIVE);
+
   const salaryTypes: SalaryType[] = ["FIXED", "PERCENTAGE", "FIXED_PLUS_PERCENTAGE"];
   for (let i = 0; i < barbers.length; i++) {
     const barber = barbers[i]!;
-    const salon = salons[i % 4]!;
-    if (salon.status !== SalonStatus.ACTIVE) continue;
+    const salon = activeSalons[i % activeSalons.length]!;
 
     await prisma.salonStaff.create({
       data: {
@@ -288,7 +329,7 @@ async function main() {
   for (let i = 0; i < 15; i++) {
     const client = clients[i % clients.length]!;
     const barber = barbers[i % barbers.length]!;
-    const salon = salons[i % 4]!;
+    const salon = activeSalons[i % activeSalons.length]!;
     const services = servicesBySalon[salon.id] ?? [];
     const service = services[i % services.length];
     if (!service) continue;

@@ -139,7 +139,10 @@ export async function createBooking(input: CreateBookingInput) {
           depositAmount: roundMoney(depositAmount),
           remainingAmount: roundMoney(remainingAmount),
           couponId: input.couponId,
-          status: "PENDING",
+          // Cash-only shop: no online prepayment gate, so a booking reserves
+          // the slot and is confirmed immediately. Payment is collected in
+          // person and recorded by staff via POST /payments (method: CASH).
+          status: "CONFIRMED",
         },
         include: bookingInclude,
       });
@@ -155,9 +158,9 @@ export async function createBooking(input: CreateBookingInput) {
 
   await createNotification({
     userId: input.clientId,
-    type: "BOOKING_CREATED",
-    title: "Booking created",
-    body: `Your booking at ${salon.name} is pending payment.`,
+    type: "BOOKING_CONFIRMED",
+    title: "Booking confirmed",
+    body: `Your booking at ${salon.name} is confirmed. Pay in cash at the salon.`,
     data: { bookingId: booking.id },
   });
 
