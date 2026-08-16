@@ -25,6 +25,7 @@ const bookingInclude = {
   client: { select: { id: true, phone: true, firstName: true, lastName: true } },
   payments: true,
   coupon: true,
+  review: { select: { id: true } },
 } satisfies Prisma.BookingInclude;
 
 export interface CreateBookingInput {
