@@ -11,7 +11,7 @@ import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { useBarberDetailQuery } from "@/entities/barber/api/barber.queries";
 import { DetailSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { ErrorState } from "@/shared/ui/ErrorState";
-import { formatDate, formatCurrency, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatCurrency, formatPhone, formatNumber } from "@/shared/lib/utils";
 import {
   ArrowLeft,
   Scissors,
@@ -125,7 +125,7 @@ export function BarberDetailPage({ id }: { id: string }) {
           <div className="space-y-1">
             <span className="text-xs font-semibold text-slate-400 uppercase">Total Completed</span>
             <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
-              {(barber.bookingsCount || 0).toLocaleString()} Bookings
+              {formatNumber(barber.bookingsCount || 0)} Bookings
             </p>
           </div>
           <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600">

@@ -1,18 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { AdminLayout } from "@/widgets/admin-layout/AdminLayout";
 import { DataTable, Column } from "@/shared/ui/DataTable";
 import { ReviewStars } from "@/entities/review/ui/ReviewStars";
 import { ReviewModerationActions } from "@/features/review-moderation/ui/ReviewModerationActions";
+import { FilterDropdown } from "@/shared/ui/FilterDropdown";
 import { Review } from "@/entities/review/model/types";
 import { useReviewsQuery } from "@/entities/review/api/review.queries";
 import { formatDate } from "@/shared/lib/utils";
 import { Star, Building2, Scissors } from "lucide-react";
 
 export function ReviewsPage() {
-  const [includeHidden, setIncludeHidden] = useState(true);
+  const [filter, setFilter] = useState("ALL");
   const [page, setPage] = useState(1);
+
+  const includeHidden = filter === "ALL" || filter === "HIDDEN";
 
   const { data, isLoading, isError, error, refetch } = useReviewsQuery({
     page,
@@ -20,16 +24,28 @@ export function ReviewsPage() {
     includeHidden,
   });
 
+  const filteredItems = (data?.items || []).filter((r) => {
+    if (filter === "PUBLISHED") return !r.isHidden;
+    if (filter === "HIDDEN") return r.isHidden;
+    return true;
+  });
+
   const columns: Column<Review>[] = [
     {
       key: "client",
       header: "Customer",
       render: (r) => (
-        <span className="font-bold text-xs text-slate-900 dark:text-white">
-          {r.client.firstName || r.client.lastName
-            ? `${r.client.firstName || ""} ${r.client.lastName || ""}`.trim()
-            : "Client"}
-        </span>
+        <div className="space-y-0.5 text-xs">
+          <Link
+            href={`/admin/users/${r.clientId}`}
+            className="font-bold text-slate-900 dark:text-white hover:text-rose-600 transition-colors block"
+          >
+            {r.client.firstName || r.client.lastName
+              ? `${r.client.firstName || ""} ${r.client.lastName || ""}`.trim()
+              : "Client"}
+          </Link>
+          <span className="text-[10px] text-slate-400 font-mono">#{r.bookingId}</span>
+        </div>
       ),
     },
     {
@@ -38,12 +54,14 @@ export function ReviewsPage() {
       render: (r) => (
         <div className="space-y-0.5 text-xs">
           <div className="flex items-center gap-1 font-semibold text-slate-800 dark:text-slate-200">
-            <Building2 className="w-3 h-3 text-slate-400" />
-            <span>{r.salon.name}</span>
+            <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
+            <span className="truncate max-w-[130px]">{r.salon.name}</span>
           </div>
           <div className="flex items-center gap-1 text-slate-500">
-            <Scissors className="w-3 h-3 text-slate-400" />
-            <span>{r.barber.user.firstName} {r.barber.user.lastName}</span>
+            <Scissors className="w-3 h-3 text-slate-400 shrink-0" />
+            <span className="truncate max-w-[130px]">
+              {r.barber.user.firstName} {r.barber.user.lastName}
+            </span>
           </div>
         </div>
       ),
@@ -68,28 +86,28 @@ export function ReviewsPage() {
       key: "comment",
       header: "Customer Feedback / Comment",
       render: (r) => (
-        <div className="max-w-md text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic">
+        <div className="max-w-md text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic line-clamp-2">
           &quot;{r.comment || "No written review text."}&quot;
         </div>
       ),
     },
     {
       key: "status",
-      header: "Visibility",
+      header: "Status",
       render: (r) =>
         r.isHidden ? (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300">
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300">
             Hidden
           </span>
         ) : (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
-            Public
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+            Published
           </span>
         ),
     },
     {
       key: "createdAt",
-      header: "Posted Date",
+      header: "Date",
       sortable: true,
       render: (r) => (
         <span className="text-xs text-slate-500">{formatDate(r.createdAt)}</span>
@@ -99,11 +117,7 @@ export function ReviewsPage() {
       key: "actions",
       header: "Moderation",
       align: "right",
-      render: (r) => (
-        <div className="flex justify-end">
-          <ReviewModerationActions reviewId={r.id} isHidden={r.isHidden} />
-        </div>
-      ),
+      render: (r) => <ReviewModerationActions review={r} />,
     },
   ];
 
@@ -124,17 +138,34 @@ export function ReviewsPage() {
         </div>
       </div>
 
+      {/* Filters */}
+      <div className="flex items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+        <FilterDropdown
+          label="Visibility Status"
+          selectedValue={filter}
+          onChange={(val) => {
+            setFilter(val);
+            setPage(1);
+          }}
+          options={[
+            { value: "ALL", label: "All Reviews" },
+            { value: "PUBLISHED", label: "Published Only" },
+            { value: "HIDDEN", label: "Hidden / Moderated" },
+          ]}
+        />
+      </div>
+
       {/* Main Table */}
       <DataTable
         columns={columns}
-        data={data?.items || []}
+        data={filteredItems}
         keyExtractor={(r) => r.id}
         isLoading={isLoading}
         isError={isError}
         error={error as Error}
         onRetry={refetch}
         emptyTitle="No reviews found"
-        emptyDescription="There are currently no reviews on record."
+        emptyDescription="There are currently no customer reviews matching your filter criteria."
         pagination={{
           currentPage: page,
           totalItems: data?.total || 0,
@@ -147,4 +178,3 @@ export function ReviewsPage() {
 }
 
 export default ReviewsPage;
-

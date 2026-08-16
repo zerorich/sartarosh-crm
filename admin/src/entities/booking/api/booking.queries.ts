@@ -6,11 +6,21 @@ export const BOOKING_KEYS = {
   all: ["bookings"] as const,
   lists: () => [...BOOKING_KEYS.all, "list"] as const,
   list: (params: BookingListParams) => [...BOOKING_KEYS.lists(), params] as const,
+  details: () => [...BOOKING_KEYS.all, "detail"] as const,
+  detail: (id: string) => [...BOOKING_KEYS.details(), id] as const,
 };
 
 export function useBookingsQuery(params: BookingListParams = { page: 1, limit: 20 }) {
   return useQuery<PaginatedResult<Booking>>({
     queryKey: BOOKING_KEYS.list(params),
     queryFn: () => api.get<PaginatedResult<Booking>>("/admin/bookings", params as any),
+  });
+}
+
+export function useBookingQuery(id: string) {
+  return useQuery<Booking>({
+    queryKey: BOOKING_KEYS.detail(id),
+    queryFn: () => api.get<Booking>(`/admin/bookings/${id}`),
+    enabled: !!id,
   });
 }

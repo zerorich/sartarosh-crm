@@ -12,7 +12,7 @@ import {
   AlertOctagon,
 } from "lucide-react";
 import { StatCard } from "@/shared/ui/StatCard";
-import { formatCurrency } from "@/shared/lib/utils";
+import { formatCurrency, formatNumber } from "@/shared/lib/utils";
 
 export interface DashboardMetrics {
   totalUsers?: number;
@@ -41,28 +41,28 @@ export function StatCardGrid({ metrics }: { metrics?: DashboardMetrics }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       <StatCard
         title="Total Users"
-        value={data.totalUsers.toLocaleString() + " Users"}
+        value={formatNumber(data.totalUsers) + " Users"}
         icon={Users}
         color="indigo"
         trend={{ value: "+14.2%", positive: true }}
       />
       <StatCard
         title="Total Salons"
-        value={data.totalSalons.toLocaleString() + " Salons"}
+        value={formatNumber(data.totalSalons) + " Salons"}
         icon={Building2}
         color="sky"
         trend={{ value: "+8.5%", positive: true }}
       />
       <StatCard
         title="Total Barbers"
-        value={data.totalBarbers.toLocaleString() + " Barbers"}
+        value={formatNumber(data.totalBarbers) + " Barbers"}
         icon={Scissors}
         color="purple"
         trend={{ value: "+18.0%", positive: true }}
       />
       <StatCard
         title="Total Bookings"
-        value={data.totalBookings.toLocaleString()}
+        value={formatNumber(data.totalBookings)}
         icon={CalendarCheck}
         color="emerald"
         trend={{ value: "+22.4%", positive: true }}

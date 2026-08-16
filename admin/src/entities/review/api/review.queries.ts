@@ -22,7 +22,7 @@ export function useHideReviewMutation() {
     mutationFn: (reviewId: string) =>
       api.patch<Review>(`/admin/reviews/${reviewId}/hide`, {}),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.all });
     },
   });
 }
@@ -34,7 +34,19 @@ export function useRestoreReviewMutation() {
     mutationFn: (reviewId: string) =>
       api.patch<Review>(`/admin/reviews/${reviewId}/restore`, {}),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.all });
+    },
+  });
+}
+
+export function useRemoveReviewMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reviewId: string) =>
+      api.delete<Review>(`/admin/reviews/${reviewId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: REVIEW_KEYS.all });
     },
   });
 }

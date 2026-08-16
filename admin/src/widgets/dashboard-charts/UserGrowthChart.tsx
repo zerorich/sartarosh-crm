@@ -3,6 +3,7 @@
 import React from "react";
 import { Card, CardHeader, CardBody } from "@/shared/ui/Card";
 import { Users, Scissors, UserCheck } from "lucide-react";
+import { formatNumber } from "@/shared/lib/utils";
 
 export function UserGrowthChart() {
   const roles = [
@@ -43,7 +44,7 @@ export function UserGrowthChart() {
                 </div>
                 <div className="flex items-baseline justify-between">
                   <span className="text-base font-extrabold text-slate-900 dark:text-white">
-                    {r.count.toLocaleString()}
+                    {formatNumber(r.count)}
                   </span>
                   <span className="text-[11px] font-semibold text-slate-400">
                     {r.percent}%
