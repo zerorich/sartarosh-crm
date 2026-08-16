@@ -14,10 +14,14 @@ let transporter: Transporter | null = null;
 
 function getTransporter(): Transporter {
   if (!transporter) {
+    // Prefer SMTPS 465 + IPv4. Railway hobby often blocks :587 and has no IPv6 egress.
     transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
+      port: 465,
+      secure: true,
+      family: 4,
+      connectionTimeout: 12_000,
+      greetingTimeout: 12_000,
       auth: {
         user: env.GMAIL_USER,
         pass: env.GMAIL_APP_PASSWORD,

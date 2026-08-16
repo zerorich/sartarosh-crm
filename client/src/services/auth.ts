@@ -1,3 +1,4 @@
+import { clearAuthTokens, getRefreshToken } from "@/lib/session";
 import { apiClient } from "./client";
 import type { AuthSession } from "@/types/user";
 
@@ -21,6 +22,14 @@ export function verifyOtp(input: {
   return apiClient.post<AuthSession>("/auth/verify-otp", input);
 }
 
-export function logout() {
-  return apiClient.post<{ loggedOut: boolean }>("/auth/logout", {}, { skipAuthRetry: true });
+export async function logout() {
+  try {
+    return await apiClient.post<{ loggedOut: boolean }>(
+      "/auth/logout",
+      { refreshToken: getRefreshToken() ?? undefined },
+      { skipAuthRetry: true },
+    );
+  } finally {
+    clearAuthTokens();
+  }
 }

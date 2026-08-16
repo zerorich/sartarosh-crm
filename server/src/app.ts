@@ -20,6 +20,7 @@ export function createApp() {
     cors({
       origin: corsOrigins,
       credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
     }),
   );
   app.use(express.json({ limit: "100kb" }));

@@ -5,12 +5,14 @@ import { AppError } from "../utils/app-error";
 import { created, ok } from "../utils/api-response";
 
 const secureCookie = env.NODE_ENV === "production";
+/** Frontends live on other Railway hostnames, so cookies must be sent cross-site. */
+const cookieSameSite = secureCookie ? "none" : "lax";
 
 function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: secureCookie,
-    sameSite: "lax",
+    sameSite: cookieSameSite,
     path: "/",
     maxAge: 15 * 60 * 1000,
   });
@@ -18,15 +20,23 @@ function setAuthCookies(res: Response, accessToken: string, refreshToken: string
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: secureCookie,
-    sameSite: "lax",
+    sameSite: cookieSameSite,
     path: "/api/auth",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 }
 
 function clearAuthCookies(res: Response) {
-  res.clearCookie("accessToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/api/auth" });
+  res.clearCookie("accessToken", {
+    path: "/",
+    secure: secureCookie,
+    sameSite: cookieSameSite,
+  });
+  res.clearCookie("refreshToken", {
+    path: "/api/auth",
+    secure: secureCookie,
+    sameSite: cookieSameSite,
+  });
 }
 
 function getRefreshToken(req: Request, bodyToken?: string): string {

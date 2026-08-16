@@ -1,5 +1,6 @@
 import { apiClient } from "./client";
 import { API_URL } from "@/lib/env";
+import { getAccessToken } from "@/lib/session";
 import { ApiError, ERROR_CODES, type ApiResponse } from "@/types/api";
 import type { Coupon } from "@/types/coupon";
 import type { MyReview } from "@/types/my-review";
@@ -19,9 +20,11 @@ export async function uploadImage(file: File): Promise<{ url: string }> {
   const formData = new FormData();
   formData.append("file", file);
 
+  const token = getAccessToken();
   const res = await fetch(`${API_URL}/uploads/image`, {
     method: "POST",
     credentials: "include",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: formData,
   });
 
