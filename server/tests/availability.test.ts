@@ -20,15 +20,18 @@ describe("intervalsOverlap", () => {
 });
 
 describe("isIntervalWithinHours", () => {
+  // Working hours are evaluated in salon-local time (Asia/Tashkent, UTC+5), regardless
+  // of the host machine's timezone — use an explicit +05:00 offset so these dates are
+  // unambiguous no matter where the test suite runs.
   it("accepts slot within working hours", () => {
-    const start = new Date("2026-08-16T10:00:00");
-    const end = new Date("2026-08-16T10:45:00");
+    const start = new Date("2026-08-16T10:00:00+05:00");
+    const end = new Date("2026-08-16T10:45:00+05:00");
     expect(isIntervalWithinHours(start, end, "09:00", "18:00")).toBe(true);
   });
 
   it("rejects slot outside working hours", () => {
-    const start = new Date("2026-08-16T07:00:00");
-    const end = new Date("2026-08-16T07:30:00");
+    const start = new Date("2026-08-16T07:00:00+05:00");
+    const end = new Date("2026-08-16T07:30:00+05:00");
     expect(isIntervalWithinHours(start, end, "09:00", "18:00")).toBe(false);
   });
 });

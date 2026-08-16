@@ -37,6 +37,11 @@ class CreateBookingFragment : Fragment() {
 
     private val displayFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", Locale.getDefault())
 
+    // Working hours (09:00-20:00) are defined in salon-local time (Asia/Tashkent), same as the
+    // backend. Using the phone's system zone here would silently shift bookings by hours on any
+    // device not set to Tashkent time.
+    private val salonZone = ZoneId.of("Asia/Tashkent")
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -103,13 +108,13 @@ class CreateBookingFragment : Fragment() {
         }
 
         val startAtIso = selectedDateTime
-            .atZone(ZoneId.systemDefault())
+            .atZone(salonZone)
             .toInstant()
             .toString()
 
         binding.confirmButton.isEnabled = false
         binding.progressBar.isVisible = true
-        binding.depositInfo.isVisible = false
+        binding.depositCard.isVisible = false
 
         viewLifecycleOwner.lifecycleScope.launch {
             repository.createBooking(
@@ -126,7 +131,7 @@ class CreateBookingFragment : Fragment() {
                         R.string.deposit_required,
                         MoneyFormatter.formatUzs(booking.depositAmount),
                     )
-                    binding.depositInfo.isVisible = true
+                    binding.depositCard.isVisible = true
                 }
 
                 Toast.makeText(requireContext(), R.string.booking_created, Toast.LENGTH_SHORT).show()

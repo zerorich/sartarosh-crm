@@ -38,7 +38,13 @@
 
     <style name="Widget.Sartarosh.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="android:background">@color/barbershop_surface</item>
+        <item name="android:elevation">4dp</item>
         <item name="titleTextColor">@color/barbershop_gold</item>
+        <item name="titleTextAppearance">@style/TextAppearance.Sartarosh.ToolbarTitle</item>
+    </style>
+
+    <style name="TextAppearance.Sartarosh.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ShapeAppearance.Sartarosh.Circle" parent="">

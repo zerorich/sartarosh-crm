@@ -1,5 +1,13 @@
+// Salon working hours are defined in local Uzbekistan time (Asia/Tashkent, UTC+5, no DST),
+// independent of the server process's own system timezone.
+const SALON_UTC_OFFSET_MINUTES = 5 * 60;
+
+function toSalonLocal(date: Date): Date {
+  return new Date(date.getTime() + SALON_UTC_OFFSET_MINUTES * 60_000);
+}
+
 export function getDayOfWeek(date: Date): number {
-  return date.getDay();
+  return toSalonLocal(date).getUTCDay();
 }
 
 export function timeToMinutes(time: string): number {
@@ -22,8 +30,10 @@ export function isIntervalWithinHours(
 ): boolean {
   const openMinutes = timeToMinutes(openTime);
   const closeMinutes = timeToMinutes(closeTime);
-  const startMinutes = startAt.getHours() * 60 + startAt.getMinutes();
-  const endMinutes = endAt.getHours() * 60 + endAt.getMinutes();
+  const startLocal = toSalonLocal(startAt);
+  const endLocal = toSalonLocal(endAt);
+  const startMinutes = startLocal.getUTCHours() * 60 + startLocal.getUTCMinutes();
+  const endMinutes = endLocal.getUTCHours() * 60 + endLocal.getUTCMinutes();
   return startMinutes >= openMinutes && endMinutes <= closeMinutes;
 }
 

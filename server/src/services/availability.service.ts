@@ -16,8 +16,20 @@ type DbClient = Prisma.TransactionClient | typeof prisma;
 
 const ACTIVE_BOOKING_STATUSES = ["PENDING", "CONFIRMED", "ARRIVED", "IN_PROGRESS"] as const;
 
+// Salon working hours are defined in local Uzbekistan time (Asia/Tashkent, UTC+5, no DST).
+// Using Date.getHours()/getDay() would instead use the server process's own system
+// timezone, which silently breaks business-hour checks whenever the server runs
+// somewhere other than Asia/Tashkent. Shift to a fixed offset instead so the result
+// is deterministic regardless of where this process is deployed.
+const SALON_UTC_OFFSET_MINUTES = 5 * 60;
+
+function toSalonLocal(date: Date): Date {
+  return new Date(date.getTime() + SALON_UTC_OFFSET_MINUTES * 60_000);
+}
+
 function formatTime(date: Date): string {
-  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  const local = toSalonLocal(date);
+  return `${String(local.getUTCHours()).padStart(2, "0")}:${String(local.getUTCMinutes()).padStart(2, "0")}`;
 }
 
 function slotWithinHours(
@@ -27,7 +39,7 @@ function slotWithinHours(
 ): boolean {
   if (workingHours.length === 0) return false;
 
-  const dayOfWeek = startAt.getDay();
+  const dayOfWeek = toSalonLocal(startAt).getUTCDay();
   const dayHours = workingHours.filter((wh) => wh.dayOfWeek === dayOfWeek);
   if (dayHours.length === 0) return false;
 

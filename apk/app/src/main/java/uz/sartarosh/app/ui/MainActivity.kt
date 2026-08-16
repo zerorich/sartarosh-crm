@@ -22,6 +22,13 @@ class MainActivity : AppCompatActivity() {
         R.id.profileFragment,
     )
 
+    // Screens that render their own toolbar/header (login has none, salon detail has a
+    // collapsing hero image with its own back button) must not also show the activity toolbar.
+    private val screensWithoutActivityToolbar = setOf(
+        R.id.loginFragment,
+        R.id.salonDetailFragment,
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Sartarosh)
         super.onCreate(savedInstanceState)
@@ -39,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val isMainTab = destination.id in topLevelDestinations
             binding.bottomNav.isVisible = isMainTab
-            binding.toolbar.isVisible = destination.id != R.id.loginFragment
+            binding.toolbar.isVisible = destination.id !in screensWithoutActivityToolbar
         }
     }
 }
