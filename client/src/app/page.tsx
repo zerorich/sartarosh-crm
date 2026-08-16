@@ -83,7 +83,7 @@ export default function HomePage() {
       <section className="mt-10 grid grid-cols-1 gap-4 border-t border-border pt-8 sm:grid-cols-3">
         <InfoItem icon={MapPin} title="Eng yaqin sartaroshxonalar" desc="Manzilingiz yaqinidagi eng yaxshi salonlar" />
         <InfoItem icon={CalendarCheck2} title="Onlayn bron qilish" desc="Vaqtingiz tejaladi, oldindan band qiling" />
-        <InfoItem icon={ShieldCheck} title="Xavfsiz to'lov" desc="Depozitni oldindan xavfsiz to'lang" />
+        <InfoItem icon={ShieldCheck} title="Naqd to'lov" desc="To'lov salonda, xizmatdan so'ng naqd qabul qilinadi" />
       </section>
 
       <section className="mt-8 flex items-center gap-4 rounded-2xl bg-primary p-6 text-primary-foreground">
