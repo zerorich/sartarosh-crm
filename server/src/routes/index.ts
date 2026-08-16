@@ -11,6 +11,7 @@ import { paymentsRouter } from "./payments.routes";
 import { reviewsRouter } from "./reviews.routes";
 import { salonRouter } from "./salon.routes";
 import { staffRouter } from "./staff.routes";
+import { uploadsRouter } from "./uploads.routes";
 import { usersRouter } from "./users.routes";
 
 export const apiRouter = Router();
@@ -52,3 +53,4 @@ apiRouter.use("/admin", adminRouter);
 apiRouter.use("/notifications", notificationsRouter);
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/availability", availabilityRouter);
+apiRouter.use("/uploads", uploadsRouter);

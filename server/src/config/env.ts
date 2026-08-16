@@ -20,6 +20,8 @@ const envSchema = z.object({
   STORAGE_URL: z.string().optional().default(""),
   STORAGE_KEY: z.string().optional().default(""),
   STORAGE_SECRET: z.string().optional().default(""),
+  /** Base URL this API is reachable at — used to build absolute /uploads/* links. */
+  PUBLIC_URL: z.string().default("http://localhost:4000"),
 });
 
 const parsed = envSchema.safeParse(process.env);
