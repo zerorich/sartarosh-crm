@@ -5,7 +5,7 @@ export function fetchSalonStaff(salonId: string) {
   return apiClient.get<SalonStaffMember[]>(`/salons/${salonId}/staff`);
 }
 
-export function inviteStaff(salonId: string, input: { barberPhone: string; salaryType?: SalaryType; salaryFixed?: number; salaryPercent?: number }) {
+export function inviteStaff(salonId: string, input: { barberEmail: string; salaryType?: SalaryType; salaryFixed?: number; salaryPercent?: number }) {
   return apiClient.post<SalonStaffMember>(`/salons/${salonId}/staff`, input);
 }
 

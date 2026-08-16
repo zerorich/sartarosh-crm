@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import { PhoneOtpFlow } from "@/components/auth/PhoneOtpFlow";
+import { EmailOtpFlow } from "@/components/auth/EmailOtpFlow";
 
 export default function LoginPage() {
   return (
     <Suspense>
-      <PhoneOtpFlow heading="Xush kelibsiz" subheading="Davom etish uchun telefon raqamingizni kiriting" />
+      <EmailOtpFlow heading="Xush kelibsiz" subheading="Davom etish uchun Gmail manzilingizni kiriting" />
     </Suspense>
   );
 }

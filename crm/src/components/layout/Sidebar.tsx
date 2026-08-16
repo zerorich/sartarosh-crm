@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarCheck2, LogOut, Scissors, Store, Users } from "lucide-react";
+import { CalendarCheck2, LogOut, Scissors, Store, Users, Wallet } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { useAuth, useLogout } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ const BASE_LINKS = [{ href: "/", label: "Bronlar", icon: CalendarCheck2 }];
 const OWNER_LINKS = [
   { href: "/services", label: "Xizmatlar", icon: Scissors },
   { href: "/staff", label: "Xodimlar", icon: Users },
+  { href: "/finance", label: "Moliya", icon: Wallet },
   { href: "/salon", label: "Salon", icon: Store },
 ];
 

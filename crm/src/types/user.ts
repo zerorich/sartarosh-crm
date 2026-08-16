@@ -2,7 +2,7 @@ export type Role = "CLIENT" | "BARBER" | "OWNER" | "ADMIN" | "SUPER_ADMIN";
 
 export interface User {
   id: string;
-  phone: string;
+  email: string;
   role: Role;
   firstName: string | null;
   lastName: string | null;

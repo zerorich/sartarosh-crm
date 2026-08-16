@@ -2,7 +2,7 @@ import type { Role } from "@prisma/client";
 
 export interface AuthUser {
   id: string;
-  phone: string;
+  email: string;
   role: Role;
   isBlocked: boolean;
 }

@@ -12,7 +12,7 @@ import { ConfirmDialog } from "@/shared/ui/ConfirmDialog";
 import { DetailSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { useToast } from "@/shared/hooks/useToast";
-import { formatDate, formatDateTime, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatDateTime, formatEmail } from "@/shared/lib/utils";
 import {
   ArrowLeft,
   AlertTriangle,
@@ -236,7 +236,7 @@ export function ComplaintDetailPage() {
                       : "Client"}
                   </Link>
                   <p className="font-mono text-slate-400 mt-0.5">
-                    {formatPhone(complaint.client.phone)}
+                    {formatEmail(complaint.client.email)}
                   </p>
                 </div>
               </div>

@@ -13,7 +13,11 @@ import {
 
 const prisma = new PrismaClient();
 
-function phone(n: number) {
+function email(n: number) {
+  return `user${String(n).padStart(4, "0")}@sartarosh.test`;
+}
+
+function salonPhone(n: number) {
   return `+99890000${String(n).padStart(4, "0")}`;
 }
 
@@ -73,13 +77,13 @@ async function main() {
   });
 
   const superAdmin = await prisma.user.create({
-    data: { phone: phone(1), role: Role.SUPER_ADMIN, firstName: "Super", lastName: "Admin" },
+    data: { email: email(1), role: Role.SUPER_ADMIN, firstName: "Super", lastName: "Admin" },
   });
 
   const admins = await Promise.all(
     [2, 3].map((n) =>
       prisma.user.create({
-        data: { phone: phone(n), role: Role.ADMIN, firstName: "Admin", lastName: String(n) },
+        data: { email: email(n), role: Role.ADMIN, firstName: "Admin", lastName: String(n) },
       }),
     ),
   );
@@ -88,7 +92,7 @@ async function main() {
     Array.from({ length: 5 }, (_, i) =>
       prisma.user.create({
         data: {
-          phone: phone(10 + i),
+          email: email(10 + i),
           role: Role.OWNER,
           firstName: "Owner",
           lastName: String(i + 1),
@@ -110,7 +114,7 @@ async function main() {
     Array.from({ length: 10 }, (_, i) =>
       prisma.user.create({
         data: {
-          phone: phone(20 + i),
+          email: email(20 + i),
           role: Role.BARBER,
           firstName: "Barber",
           lastName: String(i + 1),
@@ -126,7 +130,7 @@ async function main() {
     Array.from({ length: 20 }, (_, i) =>
       prisma.user.create({
         data: {
-          phone: phone(40 + i),
+          email: email(40 + i),
           role: Role.CLIENT,
           firstName: "Client",
           lastName: String(i + 1),
@@ -232,7 +236,7 @@ async function main() {
         city: data.city,
         lat: data.lat,
         lng: data.lng,
-        phone: phone(100 + i),
+        phone: salonPhone(100 + i),
         status: data.status,
         coverUrl: data.coverUrl,
       },
@@ -477,10 +481,10 @@ async function main() {
   }
 
   console.log("Seed complete:");
-  console.log(`  SUPER_ADMIN: ${superAdmin.phone}`);
+  console.log(`  SUPER_ADMIN: ${superAdmin.email}`);
   console.log(`  ADMINs: ${admins.length}, OWNERS: ${owners.length}, BARBERS: ${barbers.length}, CLIENTS: ${clients.length}`);
   console.log(`  SALONS: ${salons.length}, completed bookings: ${completedBookings.length}`);
-  console.log(`  INVITED staff: 1 (${invitedBarber.phone} → ${invitedSalon.name})`);
+  console.log(`  INVITED staff: 1 (${invitedBarber.email} → ${invitedSalon.name})`);
   console.log("  Working hours: ACTIVE salons + ACTIVE barbers, 09:00-20:00 every day");
   console.log("  ServicePriceHistory: open record per seeded service");
 }

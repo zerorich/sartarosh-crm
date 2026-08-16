@@ -1,6 +1,6 @@
 export type AdminUser = {
   id: string;
-  phone: string;
+  email: string;
   role: string;
   firstName: string | null;
   lastName: string | null;
@@ -33,7 +33,7 @@ export function getSessionUser(): AdminUser | null {
     if (
       parsed &&
       typeof parsed.id === "string" &&
-      typeof parsed.phone === "string" &&
+      typeof parsed.email === "string" &&
       typeof parsed.role === "string"
     ) {
       return parsed;

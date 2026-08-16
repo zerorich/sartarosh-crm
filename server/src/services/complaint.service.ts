@@ -32,7 +32,7 @@ export async function createComplaint(params: {
       body: params.body,
     },
     include: {
-      client: { select: { id: true, firstName: true, lastName: true, phone: true } },
+      client: { select: { id: true, firstName: true, lastName: true, email: true } },
       salon: { select: { id: true, name: true } },
     },
   });
@@ -62,7 +62,7 @@ export async function listComplaints(params: {
       skip: (params.page - 1) * params.limit,
       take: params.limit,
       include: {
-        client: { select: { id: true, firstName: true, lastName: true, phone: true } },
+        client: { select: { id: true, firstName: true, lastName: true, email: true } },
         salon: { select: { id: true, name: true } },
         handledBy: { select: { id: true, firstName: true, lastName: true } },
       },
@@ -77,7 +77,7 @@ export async function getComplaintById(complaintId: string) {
   const complaint = await prisma.complaint.findUnique({
     where: { id: complaintId },
     include: {
-      client: { select: { id: true, firstName: true, lastName: true, phone: true } },
+      client: { select: { id: true, firstName: true, lastName: true, email: true } },
       salon: { select: { id: true, name: true } },
       handledBy: { select: { id: true, firstName: true, lastName: true } },
     },
@@ -104,7 +104,7 @@ export async function updateComplaint(params: {
       handledById: params.adminId,
     },
     include: {
-      client: { select: { id: true, firstName: true, lastName: true, phone: true } },
+      client: { select: { id: true, firstName: true, lastName: true, email: true } },
       salon: { select: { id: true, name: true } },
       handledBy: { select: { id: true, firstName: true, lastName: true } },
     },

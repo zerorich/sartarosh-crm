@@ -27,7 +27,7 @@ import { inviteStaff, updateStaff } from "../src/services/staff.service";
 
 const barberUser = {
   id: "user-1",
-  phone: "+998900002007",
+  email: "barber2007@sartarosh.test",
   role: "BARBER",
   barberProfile: { id: "barber-1" },
 };
@@ -50,7 +50,7 @@ describe("inviteStaff", () => {
   });
 
   it("creates INVITED staff and attaches all active salon services", async () => {
-    const result = await inviteStaff("salon-1", { barberPhone: barberUser.phone });
+    const result = await inviteStaff("salon-1", { barberEmail: barberUser.email });
 
     expect(mockStaffRepository.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -70,7 +70,7 @@ describe("inviteStaff", () => {
     });
     mockStaffRepository.update.mockResolvedValue({ ...invitedStaff, status: "INVITED" });
 
-    await inviteStaff("salon-1", { barberPhone: barberUser.phone });
+    await inviteStaff("salon-1", { barberEmail: barberUser.email });
 
     expect(mockStaffRepository.update).toHaveBeenCalledWith(
       "staff-1",
@@ -90,7 +90,7 @@ describe("inviteStaff", () => {
     });
     mockStaffRepository.update.mockResolvedValue({ ...invitedStaff, status: "INVITED" });
 
-    await inviteStaff("salon-1", { barberPhone: barberUser.phone });
+    await inviteStaff("salon-1", { barberEmail: barberUser.email });
 
     expect(mockStaffRepository.update).toHaveBeenCalled();
     expect(mockStaffRepository.create).not.toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe("inviteStaff", () => {
       status: "ACTIVE",
     });
 
-    await expect(inviteStaff("salon-1", { barberPhone: barberUser.phone })).rejects.toMatchObject({
+    await expect(inviteStaff("salon-1", { barberEmail: barberUser.email })).rejects.toMatchObject({
       statusCode: 409,
     });
     expect(mockStaffRepository.assignActiveSalonServices).not.toHaveBeenCalled();

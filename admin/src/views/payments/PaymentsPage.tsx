@@ -10,7 +10,7 @@ import { Button } from "@/shared/ui/Button";
 import { PaymentStatusBadge } from "@/entities/payment/ui/PaymentStatusBadge";
 import { Payment } from "@/entities/payment/model/types";
 import { usePaymentsQuery } from "@/entities/payment/api/payment.queries";
-import { formatCurrency, formatDateTime, formatPhone } from "@/shared/lib/utils";
+import { formatCurrency, formatDateTime, formatEmail } from "@/shared/lib/utils";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { CreditCard, Eye, Building2 } from "lucide-react";
 
@@ -37,7 +37,7 @@ export function PaymentsPage() {
         p.id.toLowerCase().includes(q) ||
         p.bookingId.toLowerCase().includes(q) ||
         p.providerRef?.toLowerCase().includes(q) ||
-        p.booking?.client?.phone.includes(q) ||
+        p.booking?.client?.email?.toLowerCase().includes(q) ||
         p.booking?.salon?.name.toLowerCase().includes(q)
     );
   }, [data?.items, debouncedSearch]);
@@ -67,7 +67,7 @@ export function PaymentsPage() {
             {p.booking?.salon?.name || "Salon Booking"} (#{p.bookingId})
           </Link>
           <p className="text-slate-400 font-mono">
-            {p.booking?.client?.phone ? formatPhone(p.booking.client.phone) : "—"}
+            {p.booking?.client?.email ? formatEmail(p.booking.client.email) : "—"}
           </p>
         </div>
       ),
@@ -151,7 +151,7 @@ export function PaymentsPage() {
       {/* Filter & Search */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
         <SearchInput
-          placeholder="Search by Payment ID, client phone, or gateway ref..."
+          placeholder="Search by Payment ID, client email, or gateway ref..."
           value={search}
           onChange={(val) => {
             setSearch(val);

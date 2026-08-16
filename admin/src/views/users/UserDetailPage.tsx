@@ -13,12 +13,12 @@ import { BlockUserModal } from "@/features/block-user/ui/BlockUserModal";
 import { UnblockUserModal } from "@/features/block-user/ui/UnblockUserModal";
 import { DetailSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { ErrorState } from "@/shared/ui/ErrorState";
-import { formatDate, formatDateTime, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatDateTime, formatEmail } from "@/shared/lib/utils";
 import {
   ArrowLeft,
   ShieldBan,
   ShieldCheck,
-  Phone,
+  Mail,
   Calendar,
   AlertTriangle,
   User as UserIcon,
@@ -92,8 +92,8 @@ export function UserDetailPage({ id }: { id: string }) {
               <p className="text-xs text-slate-400 font-mono">User ID: {user.id}</p>
               <div className="flex items-center gap-4 text-xs text-slate-500 pt-1">
                 <span className="flex items-center gap-1">
-                  <Phone className="w-3.5 h-3.5 text-slate-400" />
-                  {formatPhone(user.phone)}
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  {formatEmail(user.email)}
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -162,8 +162,8 @@ export function UserDetailPage({ id }: { id: string }) {
               <span className="font-semibold">{user.lastName || "—"}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
-              <span className="text-slate-500">Phone</span>
-              <span className="font-semibold font-mono">{formatPhone(user.phone)}</span>
+              <span className="text-slate-500">Email</span>
+              <span className="font-semibold font-mono">{formatEmail(user.email)}</span>
             </div>
             <div className="flex justify-between py-1">
               <span className="text-slate-500">Last Updated</span>

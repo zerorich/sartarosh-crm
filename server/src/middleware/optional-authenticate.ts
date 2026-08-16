@@ -41,7 +41,7 @@ export async function optionalAuthenticate(req: Request, _res: Response, next: N
 
     req.user = {
       id: user.id,
-      phone: user.phone,
+      email: user.email,
       role: user.role,
       isBlocked: user.isBlocked,
       barberProfileId: user.barberProfile?.id,

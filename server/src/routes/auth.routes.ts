@@ -11,7 +11,7 @@ export const authRouter = Router();
  * /api/auth/send-otp:
  *   post:
  *     tags: [Auth]
- *     summary: Send OTP to phone
+ *     summary: Send OTP to email
  *     requestBody:
  *       required: true
  *       content:

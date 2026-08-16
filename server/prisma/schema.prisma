@@ -144,7 +144,7 @@ enum AuditAction {
 
 model User {
   id              String    @id @default(uuid())
-  phone           String    @unique
+  email           String    @unique
   role            Role      @default(CLIENT)
   firstName       String?
   lastName        String?
@@ -172,7 +172,7 @@ model User {
   salaries       Salary[]
   savedSalons    SavedSalon[]
 
-  @@index([phone])
+  @@index([email])
   @@index([role])
 }
 

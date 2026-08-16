@@ -22,7 +22,7 @@ const bookingInclude = {
   salon: { select: { id: true, name: true, ownerId: true } },
   barber: { select: { id: true, userId: true } },
   service: { select: { id: true, name: true, durationMinutes: true } },
-  client: { select: { id: true, phone: true, firstName: true, lastName: true } },
+  client: { select: { id: true, email: true, firstName: true, lastName: true } },
   payments: true,
   coupon: true,
   review: { select: { id: true } },

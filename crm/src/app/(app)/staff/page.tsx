@@ -84,7 +84,7 @@ export default function StaffPage() {
             <div key={member.id} className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3">
               <Avatar user={member.barber.user} size={40} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{fullName(member.barber.user) || member.barber.user.phone}</p>
+                <p className="truncate text-sm font-semibold">{fullName(member.barber.user) || member.barber.user.email}</p>
                 <p className="text-xs text-muted">{STATUS_LABEL[member.status]}</p>
               </div>
               {member.status === "ACTIVE" && (
@@ -108,15 +108,15 @@ export default function StaffPage() {
 
 function InviteStaffSheet({ open, onClose, salonId }: { open: boolean; onClose: () => void; salonId: string }) {
   const inviteStaff = useInviteStaff(salonId);
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     try {
-      await inviteStaff.mutateAsync({ barberPhone: phone });
-      setPhone("");
+      await inviteStaff.mutateAsync({ barberEmail: email.trim() });
+      setEmail("");
       onClose();
     } catch (err) {
       setError(getErrorMessage(err));
@@ -130,16 +130,16 @@ function InviteStaffSheet({ open, onClose, salonId }: { open: boolean; onClose: 
           Sartarosh oldindan tizimga BARBER sifatida ro&apos;yxatdan o&apos;tgan bo&apos;lishi kerak.
         </p>
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-muted" htmlFor="barber-phone">
-            Telefon raqam
+          <label className="text-xs font-medium text-muted" htmlFor="barber-email">
+            Email
           </label>
           <input
-            id="barber-phone"
-            type="tel"
+            id="barber-email"
+            type="email"
             required
-            placeholder="+998901234567"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            placeholder="sartarosh@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="h-11 rounded-xl border border-border bg-transparent px-3 text-sm outline-none focus:border-primary"
           />
         </div>

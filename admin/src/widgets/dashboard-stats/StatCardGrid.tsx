@@ -20,80 +20,91 @@ export interface DashboardMetrics {
   totalBarbers?: number;
   totalBookings?: number;
   totalRevenue?: number;
-  activeToday?: number;
+  revenueGrowth?: number;
+  bookingsGrowth?: number;
   pendingSalons?: number;
   complaintsCount?: number;
 }
 
-export function StatCardGrid({ metrics }: { metrics?: DashboardMetrics }) {
+function formatGrowth(value?: number): { value: string; positive: boolean } | undefined {
+  if (value === undefined) return undefined;
+  const positive = value >= 0;
+  return { value: `${positive ? "+" : ""}${value.toFixed(1)}%`, positive };
+}
+
+export function StatCardGrid({
+  metrics,
+  isLoading,
+}: {
+  metrics?: DashboardMetrics;
+  isLoading?: boolean;
+}) {
   const data = {
-    totalUsers: metrics?.totalUsers ?? 12482,
-    totalSalons: metrics?.totalSalons ?? 158,
-    totalBarbers: metrics?.totalBarbers ?? 482,
-    totalBookings: metrics?.totalBookings ?? 5410,
-    totalRevenue: metrics?.totalRevenue ?? 485200000,
-    activeToday: metrics?.activeToday ?? 98,
-    pendingSalons: metrics?.pendingSalons ?? 12,
-    complaintsCount: metrics?.complaintsCount ?? 4,
+    totalUsers: metrics?.totalUsers ?? 0,
+    totalSalons: metrics?.totalSalons ?? 0,
+    totalBarbers: metrics?.totalBarbers ?? 0,
+    totalBookings: metrics?.totalBookings ?? 0,
+    totalRevenue: metrics?.totalRevenue ?? 0,
+    pendingSalons: metrics?.pendingSalons ?? 0,
+    complaintsCount: metrics?.complaintsCount ?? 0,
   };
+
+  const loadingValue = isLoading ? "…" : undefined;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       <StatCard
         title="Total Users"
-        value={formatNumber(data.totalUsers) + " Users"}
+        value={loadingValue ?? formatNumber(data.totalUsers) + " Users"}
         icon={Users}
         color="indigo"
-        trend={{ value: "+14.2%", positive: true }}
       />
       <StatCard
         title="Total Salons"
-        value={formatNumber(data.totalSalons) + " Salons"}
+        value={loadingValue ?? formatNumber(data.totalSalons) + " Salons"}
         icon={Building2}
         color="sky"
-        trend={{ value: "+8.5%", positive: true }}
       />
       <StatCard
         title="Total Barbers"
-        value={formatNumber(data.totalBarbers) + " Barbers"}
+        value={loadingValue ?? formatNumber(data.totalBarbers) + " Barbers"}
         icon={Scissors}
         color="purple"
-        trend={{ value: "+18.0%", positive: true }}
       />
       <StatCard
         title="Total Bookings"
-        value={formatNumber(data.totalBookings)}
+        value={loadingValue ?? formatNumber(data.totalBookings)}
         icon={CalendarCheck}
         color="emerald"
-        trend={{ value: "+22.4%", positive: true }}
+        trend={formatGrowth(metrics?.bookingsGrowth)}
       />
       <StatCard
         title="Total Platform Revenue"
-        value={formatCurrency(data.totalRevenue)}
+        value={loadingValue ?? formatCurrency(data.totalRevenue)}
         icon={CreditCard}
         color="emerald"
-        trend={{ value: "+19.8%", positive: true }}
-      />
-      <StatCard
-        title="Active Today"
-        value={`${data.activeToday} Bookings`}
-        icon={Flame}
-        color="slate"
-        subtitle="Real-time ongoing sessions"
+        trend={formatGrowth(metrics?.revenueGrowth)}
       />
       <StatCard
         title="Pending Salons"
-        value={`${data.pendingSalons} Pending`}
+        value={loadingValue ?? `${data.pendingSalons} Pending`}
         icon={Clock}
         color="amber"
         subtitle="Requires approval review"
       />
       <StatCard
         title="Open Complaints"
-        value={`${data.complaintsCount} Issues`}
+        value={loadingValue ?? `${data.complaintsCount} Issues`}
         icon={AlertOctagon}
         color="rose"
         subtitle="Priority support resolution"
+      />
+      <StatCard
+        title="Active Barbers"
+        value={loadingValue ?? formatNumber(data.totalBarbers)}
+        icon={Flame}
+        color="slate"
+        subtitle="Staffed at active salons"
       />
     </div>
   );

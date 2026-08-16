@@ -16,7 +16,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import {
   formatCurrency,
   formatDateTime,
-  formatPhone,
+  formatEmail,
 } from "@/shared/lib/utils";
 import {
   ArrowLeft,
@@ -235,7 +235,7 @@ export function PaymentDetailPage() {
                       </span>
                     </div>
                     <p className="text-slate-400 font-mono mt-0.5">
-                      {formatPhone(payment.booking.client.phone)}
+                      {formatEmail(payment.booking.client.email)}
                     </p>
                   </div>
                 </>

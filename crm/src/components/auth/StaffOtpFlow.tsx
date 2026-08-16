@@ -3,25 +3,22 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useSendOtp, useVerifyOtp } from "@/hooks/useAuth";
 import { getErrorMessage } from "@/lib/error-messages";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types/user";
 
-function normalizePhone(raw: string): string {
-  const digits = raw.replace(/[^\d+]/g, "");
-  if (digits.startsWith("+")) return digits;
-  if (digits.startsWith("998")) return `+${digits}`;
-  return `+998${digits}`;
+function normalizeEmail(raw: string): string {
+  return raw.trim().toLowerCase();
 }
 
 export function StaffOtpFlow() {
   const router = useRouter();
-  const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [step, setStep] = useState<"email" | "otp">("email");
   const [role, setRole] = useState<Role>("BARBER");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [debugOtp, setDebugOtp] = useState<string | null>(null);
@@ -33,7 +30,7 @@ export function StaffOtpFlow() {
     e.preventDefault();
     setError(null);
     try {
-      const result = await sendOtp.mutateAsync({ phone: normalizePhone(phone), role });
+      const result = await sendOtp.mutateAsync({ email: normalizeEmail(email), role });
       setDebugOtp(result.debugOtp ?? null);
       setStep("otp");
     } catch (err) {
@@ -45,7 +42,7 @@ export function StaffOtpFlow() {
     e.preventDefault();
     setError(null);
     try {
-      await verifyOtp.mutateAsync({ phone: normalizePhone(phone), otp, role });
+      await verifyOtp.mutateAsync({ email: normalizeEmail(email), otp, role });
       router.replace("/");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -62,7 +59,7 @@ export function StaffOtpFlow() {
         </div>
       </div>
 
-      {step === "phone" ? (
+      {step === "email" ? (
         <form onSubmit={handleSendOtp} className="flex flex-col gap-3">
           <div className="flex gap-2 rounded-xl bg-surface-muted p-1">
             {(["BARBER", "OWNER"] as const).map((r) => (
@@ -80,33 +77,34 @@ export function StaffOtpFlow() {
             ))}
           </div>
 
-          <label className="text-sm font-medium" htmlFor="phone">
-            Telefon raqam
+          <label className="text-sm font-medium" htmlFor="email">
+            Email (Gmail)
           </label>
           <div className="relative">
-            <Phone className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
+            <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
             <input
-              id="phone"
-              type="tel"
-              inputMode="tel"
+              id="email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
               autoFocus
               required
-              placeholder="+998 90 123 45 67"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              placeholder="name@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="h-12 w-full rounded-xl border border-border bg-transparent pl-10 pr-4 text-sm outline-none focus:border-primary"
             />
           </div>
           {error && <p className="text-sm text-danger">{error}</p>}
           <Button type="submit" loading={sendOtp.isPending} fullWidth size="lg">
-            SMS-kod olish
+            Email-kod olish
           </Button>
         </form>
       ) : (
         <form onSubmit={handleVerifyOtp} className="flex flex-col gap-3">
           <p className="text-sm text-muted">
-            <span className="font-medium text-foreground">{normalizePhone(phone)}</span> raqamiga yuborilgan
-            6 xonali kodni kiriting.
+            <span className="font-medium text-foreground">{normalizeEmail(email)}</span> manziliga yuborilgan 6
+            xonali kodni kiriting.
           </p>
           {debugOtp && (
             <p className="rounded-lg bg-accent/10 px-3 py-2 text-xs text-accent">
@@ -130,10 +128,10 @@ export function StaffOtpFlow() {
           </Button>
           <button
             type="button"
-            onClick={() => setStep("phone")}
+            onClick={() => setStep("email")}
             className="cursor-pointer text-center text-sm text-muted underline underline-offset-4"
           >
-            Raqamni o&apos;zgartirish
+            Emailni o&apos;zgartirish
           </button>
         </form>
       )}

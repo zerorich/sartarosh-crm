@@ -6,6 +6,7 @@ import { redis } from "../config/redis";
 import { ERROR_CODES } from "../types";
 import { AppError } from "../utils/app-error";
 import { addDuration } from "../utils/duration";
+import { sendOtpEmail } from "../integrations/email.service";
 import { generateOtp, hashValue, randomToken, safeEqual } from "../utils/crypto";
 
 const SIGNUP_ROLES: Role[] = ["CLIENT", "BARBER", "OWNER"];
@@ -33,7 +34,7 @@ export interface AuthTokens {
 
 export interface AuthUserView {
   id: string;
-  phone: string;
+  email: string;
   role: Role;
   firstName: string | null;
   lastName: string | null;
@@ -51,12 +52,12 @@ export interface AuthSession {
   isNewUser: boolean;
 }
 
-function otpKey(phone: string) {
-  return `otp:${phone}`;
+function otpKey(email: string) {
+  return `otp:${email}`;
 }
 
-function otpSendKey(phone: string) {
-  return `otp:send:${phone}`;
+function otpSendKey(email: string) {
+  return `otp:send:${email}`;
 }
 
 function normalizeSignupRole(role: Role): Role {
@@ -66,8 +67,8 @@ function normalizeSignupRole(role: Role): Role {
   return role;
 }
 
-async function assertSendRateLimit(phone: string) {
-  const key = otpSendKey(phone);
+async function assertSendRateLimit(email: string) {
+  const key = otpSendKey(email);
   const count = await redis.incr(key);
 
   if (count === 1) {
@@ -113,7 +114,7 @@ async function issueRefreshToken(userId: string): Promise<string> {
 function sanitizeUser(user: User) {
   return {
     id: user.id,
-    phone: user.phone,
+    email: user.email,
     role: user.role,
     firstName: user.firstName,
     lastName: user.lastName,
@@ -126,10 +127,10 @@ function sanitizeUser(user: User) {
   };
 }
 
-export async function sendOtp(phone: string, role: Role) {
+export async function sendOtp(email: string, role: Role) {
   const signupRole = normalizeSignupRole(role);
 
-  await assertSendRateLimit(phone);
+  await assertSendRateLimit(email);
 
   const otp = generateOtp();
   const hash = hashValue(otp, env.OTP_SECRET);
@@ -140,28 +141,36 @@ export async function sendOtp(phone: string, role: Role) {
     attempts: 0,
   };
 
-  await redis.set(otpKey(phone), JSON.stringify(record), "EX", env.OTP_TTL_SECONDS);
+  await redis.set(otpKey(email), JSON.stringify(record), "EX", env.OTP_TTL_SECONDS);
+
+  try {
+    await sendOtpEmail(email, otp);
+  } catch (error) {
+    await redis.del(otpKey(email));
+    console.error("[auth] Failed to send OTP email:", error);
+    throw AppError.badRequest("Failed to send verification email");
+  }
 
   if (env.NODE_ENV !== "production") {
-    console.info(`[auth] OTP for ${phone}: ${otp}`);
+    console.info(`[auth] OTP for ${email}: ${otp}`);
   }
 
   return {
-    phone,
+    email,
     expiresInSeconds: env.OTP_TTL_SECONDS,
     ...(env.NODE_ENV !== "production" ? { debugOtp: otp } : {}),
   };
 }
 
 export async function verifyOtp(params: {
-  phone: string;
+  email: string;
   otp: string;
   role: Role;
   firstName?: string;
   lastName?: string;
 }): Promise<AuthSession> {
   const signupRole = normalizeSignupRole(params.role);
-  const raw = await redis.get(otpKey(params.phone));
+  const raw = await redis.get(otpKey(params.email));
 
   if (!raw) {
     throw AppError.badRequest("OTP expired or not found", ERROR_CODES.OTP_EXPIRED);
@@ -170,7 +179,7 @@ export async function verifyOtp(params: {
   const record = JSON.parse(raw) as OtpRecord;
 
   if (record.attempts >= env.OTP_MAX_ATTEMPTS) {
-    await redis.del(otpKey(params.phone));
+    await redis.del(otpKey(params.email));
     throw AppError.badRequest("Too many invalid OTP attempts", ERROR_CODES.RATE_LIMITED);
   }
 
@@ -178,17 +187,17 @@ export async function verifyOtp(params: {
 
   if (!safeEqual(record.hash, submittedHash)) {
     record.attempts += 1;
-    const ttl = await redis.ttl(otpKey(params.phone));
+    const ttl = await redis.ttl(otpKey(params.email));
     if (ttl > 0) {
-      await redis.set(otpKey(params.phone), JSON.stringify(record), "EX", ttl);
+      await redis.set(otpKey(params.email), JSON.stringify(record), "EX", ttl);
     }
     throw AppError.badRequest("Invalid OTP", ERROR_CODES.OTP_INVALID);
   }
 
-  await redis.del(otpKey(params.phone));
+  await redis.del(otpKey(params.email));
 
   let isNewUser = false;
-  let user = await prisma.user.findUnique({ where: { phone: params.phone } });
+  let user = await prisma.user.findUnique({ where: { email: params.email } });
 
   if (!user) {
     isNewUser = true;
@@ -197,7 +206,7 @@ export async function verifyOtp(params: {
     user = await prisma.$transaction(async (tx) => {
       const created = await tx.user.create({
         data: {
-          phone: params.phone,
+          email: params.email,
           role: effectiveRole,
           firstName: params.firstName,
           lastName: params.lastName,

@@ -24,12 +24,12 @@ vi.mock("../src/config/prisma", () => ({ prisma: mockPrisma }));
 import { env } from "../src/config/env";
 import { sendOtp, verifyOtp } from "../src/services/auth.service";
 
-const phone = "+998901234567";
+const userEmail = "user@example.com";
 
 function existingUser() {
   return {
     id: "user-1",
-    phone,
+    email: userEmail,
     role: "CLIENT" as const,
     firstName: "Ali",
     lastName: "Vali",
@@ -54,13 +54,13 @@ describe("AuthService.sendOtp", () => {
   it("sends OTP and stores a hashed record", async () => {
     mockRedis.incr.mockResolvedValue(1);
 
-    const result = await sendOtp(phone, "CLIENT");
+    const result = await sendOtp(userEmail, "CLIENT");
 
-    expect(result.phone).toBe(phone);
+    expect(result.email).toBe(userEmail);
     expect(result.expiresInSeconds).toBe(env.OTP_TTL_SECONDS);
     expect(result.debugOtp).toMatch(/^\d{6}$/);
     expect(mockRedis.set).toHaveBeenCalledWith(
-      `otp:${phone}`,
+      `otp:${userEmail}`,
       expect.any(String),
       "EX",
       env.OTP_TTL_SECONDS,
@@ -70,7 +70,7 @@ describe("AuthService.sendOtp", () => {
   it("rejects OTP send after the rate limit is exceeded", async () => {
     mockRedis.incr.mockResolvedValue(4);
 
-    await expect(sendOtp(phone, "CLIENT")).rejects.toMatchObject({
+    await expect(sendOtp(userEmail, "CLIENT")).rejects.toMatchObject({
       statusCode: 400,
       code: ERROR_CODES.RATE_LIMITED,
     });
@@ -96,18 +96,18 @@ describe("AuthService.verifyOtp", () => {
     );
     mockPrisma.user.findUnique.mockResolvedValue(existingUser());
 
-    const session = await verifyOtp({ phone, otp, role: "CLIENT" });
+    const session = await verifyOtp({ email: userEmail, otp, role: "CLIENT" });
 
     expect(session.isNewUser).toBe(false);
     expect(session.user.id).toBe("user-1");
-    expect(session.user.phone).toBe(phone);
+    expect(session.user.email).toBe(userEmail);
     expect(session.tokens.accessToken).toEqual(expect.any(String));
     expect(session.tokens.refreshToken).toEqual(expect.any(String));
     expect(mockPrisma.refreshToken.create).toHaveBeenCalledOnce();
-    expect(mockRedis.del).toHaveBeenCalledWith(`otp:${phone}`);
+    expect(mockRedis.del).toHaveBeenCalledWith(`otp:${userEmail}`);
   });
 
-  it("creates a new user when the phone is unknown", async () => {
+  it("creates a new user when the email is unknown", async () => {
     const otp = "654321";
     const created = existingUser();
     mockRedis.get.mockResolvedValue(
@@ -124,7 +124,7 @@ describe("AuthService.verifyOtp", () => {
       return fn(mockPrisma);
     });
 
-    const session = await verifyOtp({ phone, otp, role: "CLIENT", firstName: "Ali" });
+    const session = await verifyOtp({ email: userEmail, otp, role: "CLIENT", firstName: "Ali" });
 
     expect(session.isNewUser).toBe(true);
     expect(session.user.id).toBe("user-1");

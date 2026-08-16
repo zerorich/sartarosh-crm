@@ -32,7 +32,7 @@ export function useAuth() {
 
 export function useSendOtp() {
   return useMutation({
-    mutationFn: (input: { phone: string; role: Role }) => authService.sendOtp(input.phone, input.role),
+    mutationFn: (input: { email: string; role: Role }) => authService.sendOtp(input.email, input.role),
   });
 }
 

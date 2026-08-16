@@ -16,7 +16,7 @@ export async function listUsers(params: {
   if (params.role) where.role = params.role;
   if (params.search) {
     where.OR = [
-      { phone: { contains: params.search } },
+      { email: { contains: params.search, mode: "insensitive" } },
       { firstName: { contains: params.search, mode: "insensitive" } },
       { lastName: { contains: params.search, mode: "insensitive" } },
     ];
@@ -30,7 +30,7 @@ export async function listUsers(params: {
       take: params.limit,
       select: {
         id: true,
-        phone: true,
+        email: true,
         role: true,
         firstName: true,
         lastName: true,
@@ -51,7 +51,7 @@ export async function getUserById(userId: string) {
     where: { id: userId },
     select: {
       id: true,
-      phone: true,
+      email: true,
       role: true,
       firstName: true,
       lastName: true,
@@ -127,7 +127,7 @@ export async function listSalons(params: {
       take: params.limit,
       include: {
         owner: {
-          include: { user: { select: { id: true, phone: true, firstName: true, lastName: true } } },
+          include: { user: { select: { id: true, email: true, firstName: true, lastName: true } } },
         },
       },
     }),
@@ -199,7 +199,7 @@ export async function listBookings(params: { page: number; limit: number; status
       skip: (params.page - 1) * params.limit,
       take: params.limit,
       include: {
-        client: { select: { id: true, phone: true, firstName: true, lastName: true } },
+        client: { select: { id: true, email: true, firstName: true, lastName: true } },
         salon: { select: { id: true, name: true } },
         barber: { include: { user: { select: { id: true, firstName: true, lastName: true } } } },
         service: { select: { id: true, name: true, price: true } },
@@ -226,7 +226,7 @@ export async function listPayments(params: { page: number; limit: number; status
           select: {
             id: true,
             salon: { select: { id: true, name: true } },
-            client: { select: { id: true, phone: true } },
+            client: { select: { id: true, email: true } },
           },
         },
       },
@@ -247,7 +247,7 @@ export async function getPaymentById(paymentId: string) {
           startAt: true,
           price: true,
           salon: { select: { id: true, name: true, address: true, phone: true } },
-          client: { select: { id: true, phone: true, firstName: true, lastName: true } },
+          client: { select: { id: true, email: true, firstName: true, lastName: true } },
         },
       },
     },
@@ -284,7 +284,7 @@ export async function getSalonById(salonId: string) {
     where: { id: salonId },
     include: {
       owner: {
-        include: { user: { select: { id: true, phone: true, firstName: true, lastName: true } } },
+        include: { user: { select: { id: true, email: true, firstName: true, lastName: true } } },
       },
       _count: {
         select: { staff: true, bookings: true, reviews: true, services: true },
@@ -300,9 +300,9 @@ export async function getBookingById(bookingId: string) {
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
     include: {
-      client: { select: { id: true, phone: true, firstName: true, lastName: true, avatarUrl: true } },
+      client: { select: { id: true, email: true, firstName: true, lastName: true, avatarUrl: true } },
       salon: { select: { id: true, name: true, address: true, phone: true } },
-      barber: { include: { user: { select: { id: true, firstName: true, lastName: true, phone: true, avatarUrl: true } } } },
+      barber: { include: { user: { select: { id: true, firstName: true, lastName: true, email: true, avatarUrl: true } } } },
       service: { select: { id: true, name: true, durationMinutes: true, price: true } },
       payments: true,
       coupon: true,
@@ -326,7 +326,7 @@ export async function listBarbers(params: {
       OR: [
         { firstName: { contains: params.search, mode: "insensitive" } },
         { lastName: { contains: params.search, mode: "insensitive" } },
-        { phone: { contains: params.search } },
+        { email: { contains: params.search, mode: "insensitive" } },
       ],
     };
   }
@@ -342,7 +342,7 @@ export async function listBarbers(params: {
       skip: (params.page - 1) * params.limit,
       take: params.limit,
       include: {
-        user: { select: { id: true, phone: true, firstName: true, lastName: true, avatarUrl: true, isBlocked: true } },
+        user: { select: { id: true, email: true, firstName: true, lastName: true, avatarUrl: true, isBlocked: true } },
         staffAssignments: {
           where: { status: "ACTIVE" },
           include: { salon: { select: { id: true, name: true } } },
@@ -360,7 +360,7 @@ export async function getBarberById(barberId: string) {
   const barber = await prisma.barberProfile.findUnique({
     where: { id: barberId },
     include: {
-      user: { select: { id: true, phone: true, firstName: true, lastName: true, avatarUrl: true, isBlocked: true, createdAt: true } },
+      user: { select: { id: true, email: true, firstName: true, lastName: true, avatarUrl: true, isBlocked: true, createdAt: true } },
       staffAssignments: {
         where: { status: "ACTIVE" },
         include: { salon: { select: { id: true, name: true } } },

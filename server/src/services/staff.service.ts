@@ -6,7 +6,7 @@ import { AppError } from "../utils/app-error";
 import { ERROR_CODES } from "../types";
 
 export interface InviteStaffInput {
-  barberPhone: string;
+  barberEmail: string;
   salaryType?: SalaryType;
   salaryFixed?: number;
   salaryPercent?: number;
@@ -29,12 +29,12 @@ export async function inviteStaff(salonId: string, input: InviteStaffInput) {
   await assertSalonAccessible(salonId, false);
 
   const barberUser = await prisma.user.findUnique({
-    where: { phone: input.barberPhone },
+    where: { email: input.barberEmail },
     include: { barberProfile: true },
   });
 
   if (!barberUser?.barberProfile) {
-    throw AppError.notFound("Barber not found for this phone number");
+    throw AppError.notFound("Barber not found for this email address");
   }
   if (barberUser.role !== "BARBER") {
     throw AppError.badRequest("User is not a barber");

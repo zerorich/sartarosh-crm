@@ -109,7 +109,7 @@ describe("BookingService.createBooking", () => {
       salon: { id: "salon-1", name: "Test Salon", ownerId: "owner-1" },
       barber: { id: "barber-1", userId: "barber-user-1" },
       service: { id: "service-1", name: "Cut", durationMinutes: 60 },
-      client: { id: "client-1", phone: "+123", firstName: "A", lastName: "B" },
+      client: { id: "client-1", email: "client@example.com", firstName: "A", lastName: "B" },
       payments: [],
       coupon: null,
     };
@@ -157,7 +157,7 @@ describe("BookingService.createBooking", () => {
       salon: { id: "salon-1", name: "Test Salon", ownerId: "owner-1" },
       barber: { id: "barber-1", userId: "barber-user-1" },
       service: { id: "service-1", name: "Cut", durationMinutes: 60 },
-      client: { id: "client-1", phone: "+123", firstName: "A", lastName: "B" },
+      client: { id: "client-1", email: "client@example.com", firstName: "A", lastName: "B" },
       payments: [],
       coupon: null,
     });
@@ -217,7 +217,7 @@ describe("BookingService.markNoShow", () => {
         salon: { id: "salon-1", name: "S", ownerId: "o" },
         barber: { id: "b", userId: "u" },
         service: { id: "s", name: "Cut", durationMinutes: 60 },
-        client: { id: "client-1", phone: "+1", firstName: "A", lastName: "B" },
+        client: { id: "client-1", email: "client@example.com", firstName: "A", lastName: "B" },
         payments: [],
         coupon: null,
       },
@@ -262,7 +262,7 @@ describe("BookingService.startBooking barber delay coupon", () => {
       salon: { id: "salon-1", name: "S", ownerId: "o" },
       barber: { id: "b", userId: "u" },
       service: { id: "s", name: "Cut", durationMinutes: 60 },
-      client: { id: "client-1", phone: "+1", firstName: "A", lastName: "B" },
+      client: { id: "client-1", email: "client@example.com", firstName: "A", lastName: "B" },
       payments: [],
       coupon: null,
     });

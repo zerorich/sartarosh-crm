@@ -2,17 +2,17 @@ import { apiClient } from "./client";
 import type { AuthSession, Role } from "@/types/user";
 
 export interface SendOtpResult {
-  phone: string;
+  email: string;
   expiresInSeconds: number;
   debugOtp?: string;
 }
 
-export function sendOtp(phone: string, role: Role) {
-  return apiClient.post<SendOtpResult>("/auth/send-otp", { phone, role });
+export function sendOtp(email: string, role: Role) {
+  return apiClient.post<SendOtpResult>("/auth/send-otp", { email, role });
 }
 
 export function verifyOtp(input: {
-  phone: string;
+  email: string;
   otp: string;
   role: Role;
   firstName?: string;

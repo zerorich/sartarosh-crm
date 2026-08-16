@@ -2,18 +2,18 @@ import { apiClient } from "./client";
 import type { AuthSession } from "@/types/user";
 
 export interface SendOtpResult {
-  phone: string;
+  email: string;
   expiresInSeconds: number;
-  /** Faqat development'da backend shu maydonni qaytaradi (real SMS yo'q). */
+  /** Faqat development'da backend shu maydonni qaytaradi (real email yo'q). */
   debugOtp?: string;
 }
 
-export function sendOtp(phone: string) {
-  return apiClient.post<SendOtpResult>("/auth/send-otp", { phone });
+export function sendOtp(email: string) {
+  return apiClient.post<SendOtpResult>("/auth/send-otp", { email });
 }
 
 export function verifyOtp(input: {
-  phone: string;
+  email: string;
   otp: string;
   firstName?: string;
   lastName?: string;

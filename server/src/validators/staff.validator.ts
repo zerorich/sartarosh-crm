@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { phoneSchema, uuidSchema } from "./common";
+import { emailSchema, uuidSchema } from "./common";
 
 export const salonIdParamSchema = z.object({
   id: uuidSchema,
 });
 
 export const inviteStaffSchema = z.object({
-  barberPhone: phoneSchema,
+  barberEmail: emailSchema,
   salaryType: z.enum(["FIXED", "PERCENTAGE", "FIXED_PLUS_PERCENTAGE"]).optional(),
   salaryFixed: z.coerce.number().nonnegative().optional(),
   salaryPercent: z.coerce.number().min(0).max(100).optional(),

@@ -32,7 +32,7 @@ export interface Booking {
   salon: { id: string; name: string; ownerId: string };
   barber: { id: string; userId: string };
   service: { id: string; name: string; durationMinutes: number };
-  client: { id: string; phone: string; firstName: string | null; lastName: string | null };
+  client: { id: string; email: string; firstName: string | null; lastName: string | null };
   payments: import("./payment").Payment[];
   coupon: import("./coupon").Coupon | null;
   review: { id: string } | null;

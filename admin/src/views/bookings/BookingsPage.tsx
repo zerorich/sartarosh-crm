@@ -10,7 +10,7 @@ import { Button } from "@/shared/ui/Button";
 import { BookingStatusBadge } from "@/entities/booking/ui/BookingStatusBadge";
 import { Booking } from "@/entities/booking/model/types";
 import { useBookingsQuery } from "@/entities/booking/api/booking.queries";
-import { formatDateTime, formatCurrency, formatPhone } from "@/shared/lib/utils";
+import { formatDateTime, formatCurrency, formatEmail } from "@/shared/lib/utils";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { CalendarCheck, Eye, Building2, Scissors, CreditCard, Gift } from "lucide-react";
 
@@ -35,7 +35,7 @@ export function BookingsPage() {
     return items.filter(
       (b) =>
         b.id.toLowerCase().includes(q) ||
-        b.client.phone.includes(q) ||
+        b.client.email.toLowerCase().includes(q) ||
         b.client.firstName?.toLowerCase().includes(q) ||
         b.client.lastName?.toLowerCase().includes(q) ||
         b.salon.name.toLowerCase().includes(q) ||
@@ -77,7 +77,7 @@ export function BookingsPage() {
               ? `${b.client.firstName || ""} ${b.client.lastName || ""}`.trim()
               : "Client"}
           </Link>
-          <p className="text-slate-400 font-mono">{formatPhone(b.client.phone)}</p>
+          <p className="text-slate-400 font-mono">{formatEmail(b.client.email)}</p>
         </div>
       ),
     },

@@ -10,13 +10,12 @@ import { Button } from "@/shared/ui/Button";
 import { ComplaintStatusBadge } from "@/entities/complaint/ui/ComplaintStatusBadge";
 import { Complaint, ComplaintStatus } from "@/entities/complaint/model/types";
 import { useComplaintsQuery } from "@/entities/complaint/api/complaint.queries";
-import { formatDate, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatEmail } from "@/shared/lib/utils";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { AlertTriangle, Edit3, Building2, Eye } from "lucide-react";
 
 export function ComplaintsPage() {
   const [status, setStatus] = useState("ALL");
-  const [category, setCategory] = useState("ALL");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -37,7 +36,7 @@ export function ComplaintsPage() {
         (c) =>
           c.id.toLowerCase().includes(q) ||
           c.subject.toLowerCase().includes(q) ||
-          c.client.phone.includes(q) ||
+          c.client.email.toLowerCase().includes(q) ||
           c.client.firstName?.toLowerCase().includes(q) ||
           c.client.lastName?.toLowerCase().includes(q)
       );
@@ -101,7 +100,7 @@ export function ComplaintsPage() {
               ? `${c.client.firstName || ""} ${c.client.lastName || ""}`.trim()
               : "Client"}
           </Link>
-          <p className="text-slate-400 font-mono">{formatPhone(c.client.phone)}</p>
+          <p className="text-slate-400 font-mono">{formatEmail(c.client.email)}</p>
         </div>
       ),
     },
@@ -164,7 +163,7 @@ export function ComplaintsPage() {
       {/* Filter & Search */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
         <SearchInput
-          placeholder="Search by dispute subject, client phone, or ID..."
+          placeholder="Search by dispute subject, client email, or ID..."
           value={search}
           onChange={(val) => {
             setSearch(val);
@@ -174,23 +173,6 @@ export function ComplaintsPage() {
         />
 
         <div className="flex flex-wrap items-center gap-2">
-          <FilterDropdown
-            label="Category"
-            selectedValue={category}
-            onChange={(val) => {
-              setCategory(val);
-              setPage(1);
-            }}
-            options={[
-              { value: "ALL", label: "All Categories" },
-              { value: "BARBER_LATE", label: "Barber Late" },
-              { value: "SERVICE_QUALITY", label: "Service Quality" },
-              { value: "PAYMENT", label: "Payment Issue" },
-              { value: "SALON", label: "Salon Facility" },
-              { value: "OTHER", label: "Other" },
-            ]}
-          />
-
           <FilterDropdown
             label="Status"
             selectedValue={status}

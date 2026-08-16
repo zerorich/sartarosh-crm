@@ -46,7 +46,7 @@ export async function authenticate(req: Request, _res: Response, next: NextFunct
 
     req.user = {
       id: user.id,
-      phone: user.phone,
+      email: user.email,
       role: user.role,
       isBlocked: user.isBlocked,
       barberProfileId: user.barberProfile?.id,

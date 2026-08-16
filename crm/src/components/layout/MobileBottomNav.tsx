@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarCheck2, Scissors, Store, User, Users } from "lucide-react";
+import { CalendarCheck2, Scissors, Store, User, Users, Wallet } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ export function MobileBottomNav() {
       ? [
           { href: "/services", label: "Xizmatlar", icon: Scissors },
           { href: "/staff", label: "Xodimlar", icon: Users },
+          { href: "/finance", label: "Moliya", icon: Wallet },
           { href: "/salon", label: "Salon", icon: Store },
         ]
       : []),

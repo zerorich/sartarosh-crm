@@ -17,7 +17,7 @@ export function Avatar({ user, size = 40, className }: AvatarProps) {
         alt={initials(user)}
         width={size}
         height={size}
-        className={cn("rounded-full object-cover", className)}
+        className={cn("rounded-full object-cover ring-1 ring-black/5", className)}
       />
     );
   }
@@ -27,7 +27,7 @@ export function Avatar({ user, size = 40, className }: AvatarProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full font-semibold text-white",
+        "flex shrink-0 items-center justify-center rounded-full font-semibold text-white ring-1 ring-black/5",
         avatarColorFor(seed || "?"),
         className,
       )}

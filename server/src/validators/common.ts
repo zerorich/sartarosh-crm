@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-export const phoneSchema = z
+export const emailSchema = z
   .string()
   .trim()
-  .regex(/^\+?[1-9]\d{7,14}$/, "Invalid phone number");
+  .toLowerCase()
+  .pipe(z.email("Invalid email address"));
 
 export const uuidSchema = z.string().uuid();
 

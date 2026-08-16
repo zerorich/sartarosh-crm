@@ -12,7 +12,7 @@ vi.mock("../src/config/prisma", () => ({ prisma: mockPrisma }));
 
 function runAuthorize(roles: Parameters<typeof authorize>[0][], userRole: string) {
   const middleware = authorize(...roles);
-  const req = { user: { id: "u1", phone: "+1", role: userRole, isBlocked: false } } as Request;
+  const req = { user: { id: "u1", email: "user@example.com", role: userRole, isBlocked: false } } as Request;
   const res = {} as Response;
   let error: unknown;
   const next: NextFunction = (err) => {

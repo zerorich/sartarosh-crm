@@ -7,7 +7,7 @@ export interface Complaint {
     id: string;
     firstName: string | null;
     lastName: string | null;
-    phone: string;
+    email: string;
   };
   salonId?: string | null;
   salon?: {

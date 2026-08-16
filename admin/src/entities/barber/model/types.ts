@@ -1,4 +1,13 @@
-export type BarberStatus = "ACTIVE" | "BLOCKED" | "SUSPENDED";
+export type BarberStatus = "ACTIVE" | "BLOCKED";
+
+export interface BarberStaffAssignment {
+  id: string;
+  status: string;
+  salon: {
+    id: string;
+    name: string;
+  };
+}
 
 export interface Barber {
   id: string;
@@ -7,20 +16,15 @@ export interface Barber {
     id: string;
     firstName: string | null;
     lastName: string | null;
-    phone: string;
+    email: string;
     avatarUrl: string | null;
     isBlocked: boolean;
   };
-  salon?: {
-    id: string;
-    name: string;
-  };
+  staffAssignments?: BarberStaffAssignment[];
   bio?: string | null;
   rating: number;
   reviewCount: number;
-  bookingsCount?: number;
-  revenue?: number;
-  status: BarberStatus;
+  _count?: { bookings: number; reviews: number };
   createdAt: string;
 }
 

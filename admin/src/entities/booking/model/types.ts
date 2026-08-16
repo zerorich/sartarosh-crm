@@ -14,7 +14,7 @@ export interface Booking {
     id: string;
     firstName: string | null;
     lastName: string | null;
-    phone: string;
+    email: string;
     avatarUrl?: string | null;
   };
   salonId: string;
@@ -31,7 +31,7 @@ export interface Booking {
       id: string;
       firstName: string | null;
       lastName: string | null;
-      phone?: string;
+      email: string;
       avatarUrl?: string | null;
     };
   };
@@ -51,9 +51,9 @@ export interface Booking {
   actualEndAt?: string | null;
   delayMinutes?: number;
   compensationPercent?: number;
-  price: number;
-  depositAmount: number;
-  remainingAmount: number;
+  price: number | string;
+  depositAmount: number | string;
+  remainingAmount: number | string;
   couponId?: string | null;
   coupon?: {
     id: string;

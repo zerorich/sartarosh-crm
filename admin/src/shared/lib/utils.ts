@@ -61,6 +61,11 @@ export function formatRelativeDate(date: string | Date | null | undefined): stri
   return "Just now";
 }
 
+export function formatEmail(email: string | null | undefined): string {
+  if (!email) return "—";
+  return email;
+}
+
 export function formatPhone(phone: string): string {
   if (!phone) return "—";
   const cleaned = phone.replace(/\D/g, "");

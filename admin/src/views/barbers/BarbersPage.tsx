@@ -12,7 +12,7 @@ import { BarberRating } from "@/entities/barber/ui/BarberRating";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { Barber } from "@/entities/barber/model/types";
 import { useBarbersQuery } from "@/entities/barber/api/barber.queries";
-import { formatCurrency, formatPhone } from "@/shared/lib/utils";
+import { formatEmail } from "@/shared/lib/utils";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { Scissors, Eye, Building2, CalendarCheck } from "lucide-react";
 
@@ -32,7 +32,9 @@ export function BarbersPage() {
   const filteredItems = useMemo(() => {
     const items = data?.items ?? [];
     if (status === "ALL") return items;
-    return items.filter((barber) => barber.status === status);
+    return items.filter((barber) =>
+      status === "BLOCKED" ? barber.user.isBlocked : !barber.user.isBlocked
+    );
   }, [data?.items, status]);
 
   const columns: Column<Barber>[] = [
@@ -58,7 +60,7 @@ export function BarbersPage() {
                 ? `${barber.user.firstName || ""} ${barber.user.lastName || ""}`.trim()
                 : "Barber"}
             </Link>
-            <p className="text-xs text-slate-400 font-mono">{formatPhone(barber.user.phone)}</p>
+            <p className="text-xs text-slate-400 font-mono">{formatEmail(barber.user.email)}</p>
           </div>
         </div>
       ),
@@ -70,7 +72,7 @@ export function BarbersPage() {
         <div className="flex items-center gap-1.5 text-xs">
           <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <span className="font-semibold text-slate-800 dark:text-slate-200">
-            {barber.salon?.name || "Independent"}
+            {barber.staffAssignments?.[0]?.salon.name || "Independent"}
           </span>
         </div>
       ),
@@ -91,26 +93,15 @@ export function BarbersPage() {
       render: (barber) => (
         <div className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
           <CalendarCheck className="w-3.5 h-3.5 text-slate-400" />
-          <span>{barber.bookingsCount || 0}</span>
+          <span>{barber._count?.bookings || 0}</span>
         </div>
-      ),
-    },
-    {
-      key: "revenue",
-      header: "Gross Revenue",
-      align: "right",
-      sortable: true,
-      render: (barber) => (
-        <span className="font-mono text-xs font-bold text-emerald-700 dark:text-emerald-400">
-          {formatCurrency(barber.revenue || 0)}
-        </span>
       ),
     },
     {
       key: "status",
       header: "Status",
       render: (barber) => (
-        <StatusBadge type="salon" value={barber.status} />
+        <StatusBadge type="userStatus" value={barber.user.isBlocked} />
       ),
     },
     {
@@ -170,7 +161,6 @@ export function BarbersPage() {
               { value: "ALL", label: "All Statuses" },
               { value: "ACTIVE", label: "Active" },
               { value: "BLOCKED", label: "Blocked" },
-              { value: "SUSPENDED", label: "Suspended" },
             ]}
           />
         </div>

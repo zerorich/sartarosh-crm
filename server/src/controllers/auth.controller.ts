@@ -38,21 +38,21 @@ function getRefreshToken(req: Request, bodyToken?: string): string {
 }
 
 export async function sendOtp(req: Request, res: Response) {
-  const { phone, role } = req.body as { phone: string; role: import("@prisma/client").Role };
-  const result = await authService.sendOtp(phone, role);
+  const { email, role } = req.body as { email: string; role: import("@prisma/client").Role };
+  const result = await authService.sendOtp(email, role);
   return ok(res, result);
 }
 
 export async function verifyOtp(req: Request, res: Response) {
-  const { phone, otp, role, firstName, lastName } = req.body as {
-    phone: string;
+  const { email, otp, role, firstName, lastName } = req.body as {
+    email: string;
     otp: string;
     role: import("@prisma/client").Role;
     firstName?: string;
     lastName?: string;
   };
 
-  const session = await authService.verifyOtp({ phone, otp, role, firstName, lastName });
+  const session = await authService.verifyOtp({ email, otp, role, firstName, lastName });
   setAuthCookies(res, session.tokens.accessToken, session.tokens.refreshToken);
 
   return created(res, {

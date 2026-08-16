@@ -62,7 +62,7 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-md px-4 py-6">
       <h1 className="mb-4 text-xl font-bold">Profil</h1>
-      <p className="mb-6 text-sm text-muted">{user.phone} · {isOwner ? "Salon egasi" : "Sartarosh"}</p>
+      <p className="mb-6 text-sm text-muted">{user.email} · {isOwner ? "Salon egasi" : "Sartarosh"}</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4">
         <div className="flex flex-col items-center gap-2">

@@ -36,12 +36,12 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
       ) : (
         <>
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-xl font-bold">{fullName(booking.data.client) || booking.data.client.phone}</h1>
+            <h1 className="text-xl font-bold">{fullName(booking.data.client) || booking.data.client.email}</h1>
             <BookingStatusBadge status={booking.data.status} />
           </div>
 
           <div className="rounded-2xl border border-border bg-surface p-4">
-            <Row label="Telefon" value={booking.data.client.phone} />
+            <Row label="Email" value={booking.data.client.email} />
             <Row label="Xizmat" value={booking.data.service.name} />
             <Row label="Sana" value={formatDateWithWeekday(booking.data.startAt)} />
             <Row label="Vaqt" value={formatTime(booking.data.startAt)} />

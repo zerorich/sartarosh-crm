@@ -5,7 +5,7 @@ export type PaymentType = "DEPOSIT" | "REMAINING" | "FULL";
 export interface Payment {
   id: string;
   bookingId: string;
-  amount: number;
+  amount: number | string;
   method: PaymentMethod;
   type: PaymentType;
   status: PaymentStatus;
@@ -19,9 +19,9 @@ export interface Payment {
   booking?: {
     id: string;
     startAt?: string;
-    price?: number;
+    price?: number | string;
     salon: { id: string; name: string; address?: string };
-    client: { id: string; firstName?: string | null; lastName?: string | null; phone: string };
+    client: { id: string; firstName?: string | null; lastName?: string | null; email: string };
   };
 }
 

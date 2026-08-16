@@ -42,7 +42,7 @@ export default function ProfilePage() {
         <Avatar user={user} size={64} />
         <div className="min-w-0 flex-1">
           <p className="text-lg font-bold">{[user.firstName, user.lastName].filter(Boolean).join(" ") || "Mijoz"}</p>
-          <p className="text-sm text-muted">{user.phone}</p>
+          <p className="text-sm text-muted">{user.email}</p>
         </div>
         <button
           onClick={() => setEditOpen(true)}

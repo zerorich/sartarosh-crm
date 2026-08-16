@@ -13,7 +13,7 @@ import { ErrorState } from "@/shared/ui/ErrorState";
 import {
   formatCurrency,
   formatDateTime,
-  formatPhone,
+  formatEmail,
 } from "@/shared/lib/utils";
 import {
   ArrowLeft,
@@ -228,9 +228,9 @@ export function BookingDetailPage() {
                   <p className="text-xs text-slate-500">
                     Assigned Master Stylist
                   </p>
-                  {booking.barber.user.phone && (
+                  {booking.barber.user.email && (
                     <p className="text-xs font-mono text-slate-400">
-                      {formatPhone(booking.barber.user.phone)}
+                      {formatEmail(booking.barber.user.email)}
                     </p>
                   )}
                 </div>
@@ -281,7 +281,7 @@ export function BookingDetailPage() {
                       : "Registered Client"}
                   </Link>
                   <p className="font-mono text-slate-400 mt-0.5">
-                    {formatPhone(booking.client.phone)}
+                    {formatEmail(booking.client.email)}
                   </p>
                 </div>
               </div>

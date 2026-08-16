@@ -14,7 +14,7 @@ import { useSalonsQuery } from "@/entities/salon/api/salon.queries";
 import { ApproveSalonModal } from "@/features/salon-actions/ui/ApproveSalonModal";
 import { RejectSalonModal } from "@/features/salon-actions/ui/RejectSalonModal";
 import { BlockSalonModal } from "@/features/salon-actions/ui/BlockSalonModal";
-import { formatDate, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatEmail } from "@/shared/lib/utils";
 import {
   Building2,
   Eye,
@@ -22,7 +22,6 @@ import {
   XCircle,
   ShieldBan,
   MapPin,
-  Users,
 } from "lucide-react";
 
 export function SalonsPage() {
@@ -83,7 +82,7 @@ export function SalonsPage() {
               : "Owner ID: " + salon.id}
           </p>
           <p className="text-slate-400 font-mono">
-            {salon.owner?.user?.phone ? formatPhone(salon.owner.user.phone) : "—"}
+            {salon.owner?.user?.email ? formatEmail(salon.owner.user.email) : "—"}
           </p>
         </div>
       ),
@@ -94,17 +93,6 @@ export function SalonsPage() {
       sortable: true,
       render: (salon) => (
         <BarberRating rating={salon.rating} reviewCount={salon.reviewCount} />
-      ),
-    },
-    {
-      key: "staffCount",
-      header: "Barbers",
-      align: "center",
-      render: (salon) => (
-        <div className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-          <Users className="w-3.5 h-3.5 text-slate-400" />
-          <span>{salon.staffCount || 0}</span>
-        </div>
       ),
     },
     {

@@ -6,33 +6,7 @@ export interface SalonOwner {
     id: string;
     firstName: string | null;
     lastName: string | null;
-    phone: string;
-  };
-}
-
-export interface SalonService {
-  id: string;
-  name: string;
-  description?: string | null;
-  durationMinutes: number;
-  price: number | string;
-  isActive: boolean;
-}
-
-export interface SalonStaffMember {
-  id: string;
-  status: string;
-  barber: {
-    id: string;
-    rating: number;
-    reviewCount: number;
-    user: {
-      id: string;
-      firstName: string | null;
-      lastName: string | null;
-      avatarUrl: string | null;
-      phone: string;
-    };
+    email: string;
   };
 }
 
@@ -51,14 +25,12 @@ export interface Salon {
   rating: number;
   reviewCount: number;
   depositType: "PERCENTAGE" | "FIXED" | "NONE";
-  depositValue: number;
+  depositValue: number | string;
   createdAt: string;
   updatedAt?: string;
   owner?: SalonOwner;
-  staffCount?: number;
-  bookingsCount?: number;
-  services?: SalonService[];
-  staff?: SalonStaffMember[];
+  /** Only present on the salon detail endpoint (`GET /admin/salons/:id`), not on list responses. */
+  _count?: { staff: number; bookings: number; reviews: number; services: number };
 }
 
 export interface SalonListParams {

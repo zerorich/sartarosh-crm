@@ -25,7 +25,7 @@ const staffSelect = {
           firstName: true,
           lastName: true,
           avatarUrl: true,
-          phone: true,
+          email: true,
         },
       },
     },
@@ -89,7 +89,7 @@ export const staffRepository = {
             firstName: true,
             lastName: true,
             avatarUrl: true,
-            phone: true,
+            email: true,
           },
         },
         staffAssignments: {

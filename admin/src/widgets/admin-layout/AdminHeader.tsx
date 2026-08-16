@@ -17,7 +17,7 @@ import {
 import { UserAvatar } from "@/shared/ui/UserAvatar";
 import { useToast } from "@/shared/hooks/useToast";
 import { clearSession, type AdminUser } from "@/shared/lib/session";
-import { formatPhone } from "@/shared/lib/utils";
+import { formatEmail } from "@/shared/lib/utils";
 
 export interface AdminHeaderProps {
   onMobileMenuToggle: () => void;
@@ -26,7 +26,7 @@ export interface AdminHeaderProps {
 
 function getDisplayName(user: AdminUser): string {
   const parts = [user.firstName, user.lastName].filter(Boolean);
-  return parts.length > 0 ? parts.join(" ") : user.phone;
+  return parts.length > 0 ? parts.join(" ") : user.email;
 }
 
 function getRoleLabel(role: string): string {
@@ -48,7 +48,7 @@ export function AdminHeader({
 
   const displayName = getDisplayName(currentUser);
   const roleLabel = getRoleLabel(currentUser.role);
-  const formattedPhone = formatPhone(currentUser.phone);
+  const formattedEmail = formatEmail(currentUser.email);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -182,7 +182,7 @@ export function AdminHeader({
             <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-dropdown border border-slate-200 dark:border-slate-800 py-1.5 z-40 animate-in fade-in zoom-in-95">
               <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
                 <p className="text-xs font-bold text-slate-900 dark:text-white">Signed in as</p>
-                <p className="text-xs text-slate-500 truncate">{formattedPhone}</p>
+                <p className="text-xs text-slate-500 truncate">{formattedEmail}</p>
               </div>
 
               <div className="py-1">

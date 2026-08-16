@@ -14,7 +14,7 @@ import { User, UserRole } from "@/entities/user/model/types";
 import { useUsersQuery } from "@/entities/user/api/user.queries";
 import { BlockUserModal } from "@/features/block-user/ui/BlockUserModal";
 import { UnblockUserModal } from "@/features/block-user/ui/UnblockUserModal";
-import { formatDate, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatEmail } from "@/shared/lib/utils";
 import { Eye, ShieldBan, ShieldCheck, UserPlus, Users as UsersIcon } from "lucide-react";
 
 export function UsersPage() {
@@ -62,11 +62,11 @@ export function UsersPage() {
       ),
     },
     {
-      key: "phone",
-      header: "Phone Number",
+      key: "email",
+      header: "Email",
       render: (user) => (
         <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
-          {formatPhone(user.phone)}
+          {formatEmail(user.email)}
         </span>
       ),
     },
@@ -163,7 +163,7 @@ export function UsersPage() {
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
         <SearchInput
-          placeholder="Search by name or phone number..."
+          placeholder="Search by name or email..."
           value={search}
           onChange={(val) => {
             setSearch(val);
@@ -216,7 +216,7 @@ export function UsersPage() {
           isOpen={!!selectedUserForBlock}
           onClose={() => setSelectedUserForBlock(null)}
           userId={selectedUserForBlock.id}
-          userName={`${selectedUserForBlock.firstName || ""} ${selectedUserForBlock.lastName || ""}`.trim() || selectedUserForBlock.phone}
+          userName={`${selectedUserForBlock.firstName || ""} ${selectedUserForBlock.lastName || ""}`.trim() || selectedUserForBlock.email}
         />
       )}
 
@@ -226,7 +226,7 @@ export function UsersPage() {
           isOpen={!!selectedUserForUnblock}
           onClose={() => setSelectedUserForUnblock(null)}
           userId={selectedUserForUnblock.id}
-          userName={`${selectedUserForUnblock.firstName || ""} ${selectedUserForUnblock.lastName || ""}`.trim() || selectedUserForUnblock.phone}
+          userName={`${selectedUserForUnblock.firstName || ""} ${selectedUserForUnblock.lastName || ""}`.trim() || selectedUserForUnblock.email}
         />
       )}
     </AdminLayout>

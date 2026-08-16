@@ -10,27 +10,24 @@ import { UserGrowthChart } from "@/widgets/dashboard-charts/UserGrowthChart";
 import { SalonGrowthChart } from "@/widgets/dashboard-charts/SalonGrowthChart";
 import { RecentActivityList } from "@/widgets/recent-activity/RecentActivityList";
 import { useAdminReportsQuery } from "@/entities/report/api/report.queries";
-import { Button } from "@/shared/ui/Button";
+import { formatNumber } from "@/shared/lib/utils";
 import {
-  Download,
   Building2,
   AlertTriangle,
   Scissors,
   ArrowUpRight,
 } from "lucide-react";
-import { useToast } from "@/shared/hooks/useToast";
 
 export function DashboardPage() {
   const { data: reports, isLoading } = useAdminReportsQuery();
-  const { info } = useToast();
 
-  const handleExport = () => {
-    info("Report Exported", "Summary platform report has been generated and downloaded.");
-  };
+  const pendingSalons = reports?.salons.find((s) => s.status === "PENDING")?.count ?? 0;
+  const openComplaints = reports?.complaints.find((c) => c.status === "OPEN")?.count ?? 0;
+  const totalBarbers = reports?.overview?.barbers ?? 0;
 
   return (
     <AdminLayout>
-      {/* Top Banner / Welcome */}
+      {/* Top Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 sm:p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
         {/* Glow decoration */}
         <div className="absolute right-0 top-0 w-96 h-96 bg-rose-600/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
@@ -41,39 +38,37 @@ export function DashboardPage() {
             <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
             <span>CutZone Live Platform Overview</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome back, Javodbek!
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Dashboard</h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
             Monitor real-time bookings, verify partner salons, oversee customer complaints, and ensure platform health.
           </p>
         </div>
 
         <div className="flex items-center gap-3 z-10 shrink-0">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleExport}
-            leftIcon={<Download className="w-4 h-4" />}
-            className="bg-white/10 text-white hover:bg-white/20 border-white/20"
-          >
-            Export Summary
-          </Button>
           <Link href="/admin/salons">
-            <Button
-              variant="primary"
-              size="sm"
-              leftIcon={<Building2 className="w-4 h-4" />}
-              className="bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/30"
-            >
-              Review Salons (12)
-            </Button>
+            <span className="inline-flex items-center gap-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/30 px-4 py-2 text-sm font-semibold transition-colors">
+              <Building2 className="w-4 h-4" />
+              Review Salons {pendingSalons > 0 ? `(${pendingSalons})` : ""}
+            </span>
           </Link>
         </div>
       </div>
 
       {/* KPI Stats Grid */}
-      <StatCardGrid />
+      <StatCardGrid
+        metrics={{
+          totalUsers: reports?.overview?.users,
+          totalSalons: reports?.overview?.salons,
+          totalBarbers: reports?.overview?.barbers,
+          totalBookings: reports?.overview?.bookings,
+          totalRevenue: reports?.overview?.revenue,
+          revenueGrowth: reports?.overview?.revenueGrowth,
+          bookingsGrowth: reports?.overview?.bookingsGrowth,
+          pendingSalons,
+          complaintsCount: openComplaints,
+        }}
+        isLoading={isLoading}
+      />
 
       {/* Quick Action Shortcuts */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -86,7 +81,9 @@ export function DashboardPage() {
               <Building2 className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">12 Pending Salons</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">
+                {formatNumber(pendingSalons)} Pending Salons
+              </p>
               <p className="text-[11px] text-slate-500">Awaiting approval review</p>
             </div>
           </div>
@@ -102,7 +99,9 @@ export function DashboardPage() {
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">4 Open Complaints</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">
+                {formatNumber(openComplaints)} Open Complaints
+              </p>
               <p className="text-[11px] text-slate-500">Requires customer care action</p>
             </div>
           </div>
@@ -118,7 +117,9 @@ export function DashboardPage() {
               <Scissors className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">482 Active Barbers</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">
+                {formatNumber(totalBarbers)} Active Barbers
+              </p>
               <p className="text-[11px] text-slate-500">View performance & ratings</p>
             </div>
           </div>

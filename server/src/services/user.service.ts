@@ -6,7 +6,7 @@ import { AppError } from "../utils/app-error";
 function sanitizeUser(user: User) {
   return {
     id: user.id,
-    phone: user.phone,
+    email: user.email,
     role: user.role,
     firstName: user.firstName,
     lastName: user.lastName,

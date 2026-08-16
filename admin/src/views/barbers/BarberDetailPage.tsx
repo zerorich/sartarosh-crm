@@ -11,12 +11,12 @@ import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { useBarberDetailQuery } from "@/entities/barber/api/barber.queries";
 import { DetailSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { ErrorState } from "@/shared/ui/ErrorState";
-import { formatDate, formatCurrency, formatPhone, formatNumber } from "@/shared/lib/utils";
+import { formatDate, formatEmail, formatNumber } from "@/shared/lib/utils";
 import {
   ArrowLeft,
   Scissors,
   Building2,
-  Phone,
+  Mail,
   Calendar,
   CreditCard,
   CalendarCheck,
@@ -81,13 +81,13 @@ export function BarberDetailPage({ id }: { id: string }) {
                 <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   {fullName}
                 </h1>
-                <StatusBadge type="salon" value={barber.status} />
+                <StatusBadge type="userStatus" value={barber.user.isBlocked} />
               </div>
               <p className="text-xs text-slate-400 font-mono">Barber ID: {barber.id}</p>
               <div className="flex items-center gap-4 text-xs text-slate-500 pt-1">
                 <span className="flex items-center gap-1">
-                  <Phone className="w-3.5 h-3.5 text-slate-400" />
-                  {formatPhone(barber.user.phone)}
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  {formatEmail(barber.user.email)}
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -125,7 +125,7 @@ export function BarberDetailPage({ id }: { id: string }) {
           <div className="space-y-1">
             <span className="text-xs font-semibold text-slate-400 uppercase">Total Completed</span>
             <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
-              {formatNumber(barber.bookingsCount || 0)} Bookings
+              {formatNumber(barber._count?.bookings || 0)} Bookings
             </p>
           </div>
           <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600">
@@ -135,9 +135,9 @@ export function BarberDetailPage({ id }: { id: string }) {
 
         <Card className="p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-xs font-semibold text-slate-400 uppercase">Total Revenue</span>
+            <span className="text-xs font-semibold text-slate-400 uppercase">Total Reviews</span>
             <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
-              {formatCurrency(barber.revenue || 0)}
+              {formatNumber(barber._count?.reviews ?? barber.reviewCount ?? 0)}
             </p>
           </div>
           <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600">
@@ -174,20 +174,25 @@ export function BarberDetailPage({ id }: { id: string }) {
             }
           />
           <CardBody className="text-xs space-y-3">
-            {barber.salon ? (
-              <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                <div>
-                  <p className="font-bold text-slate-900 dark:text-white text-sm">
-                    {barber.salon.name}
-                  </p>
-                  <p className="text-slate-400 text-xs font-mono">Salon ID: {barber.salon.id}</p>
+            {barber.staffAssignments && barber.staffAssignments.length > 0 ? (
+              barber.staffAssignments.map((assignment) => (
+                <div
+                  key={assignment.id}
+                  className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800 rounded-xl"
+                >
+                  <div>
+                    <p className="font-bold text-slate-900 dark:text-white text-sm">
+                      {assignment.salon.name}
+                    </p>
+                    <p className="text-slate-400 text-xs font-mono">Salon ID: {assignment.salon.id}</p>
+                  </div>
+                  <Link href={`/admin/salons/${assignment.salon.id}`}>
+                    <Button variant="secondary" size="sm">
+                      Salon Details &rarr;
+                    </Button>
+                  </Link>
                 </div>
-                <Link href={`/admin/salons/${barber.salon.id}`}>
-                  <Button variant="secondary" size="sm">
-                    Salon Details &rarr;
-                  </Button>
-                </Link>
-              </div>
+              ))
             ) : (
               <p className="text-slate-400">Independent / Freelance Barber</p>
             )}

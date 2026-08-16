@@ -2,31 +2,32 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useSendOtp, useVerifyOtp } from "@/hooks/useAuth";
 import { getErrorMessage } from "@/lib/error-messages";
 
-function normalizePhone(raw: string): string {
-  const digits = raw.replace(/[^\d+]/g, "");
-  if (digits.startsWith("+")) return digits;
-  if (digits.startsWith("998")) return `+${digits}`;
-  return `+998${digits}`;
+function normalizeEmail(raw: string): string {
+  return raw.trim().toLowerCase();
 }
 
-interface PhoneOtpFlowProps {
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+interface EmailOtpFlowProps {
   heading: string;
   subheading: string;
   askName?: boolean;
 }
 
-export function PhoneOtpFlow({ heading, subheading, askName }: PhoneOtpFlowProps) {
+export function EmailOtpFlow({ heading, subheading, askName }: EmailOtpFlowProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/";
 
-  const [step, setStep] = useState<"phone" | "otp">("phone");
-  const [phone, setPhone] = useState("");
+  const [step, setStep] = useState<"email" | "otp">("email");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -39,8 +40,15 @@ export function PhoneOtpFlow({ heading, subheading, askName }: PhoneOtpFlowProps
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    const normalized = normalizeEmail(email);
+    if (!isValidEmail(normalized)) {
+      setError("To'g'ri email manzilini kiriting (masalan, example@gmail.com).");
+      return;
+    }
+
     try {
-      const result = await sendOtp.mutateAsync(normalizePhone(phone));
+      const result = await sendOtp.mutateAsync(normalized);
       setDebugOtp(result.debugOtp ?? null);
       setStep("otp");
     } catch (err) {
@@ -53,7 +61,7 @@ export function PhoneOtpFlow({ heading, subheading, askName }: PhoneOtpFlowProps
     setError(null);
     try {
       await verifyOtp.mutateAsync({
-        phone: normalizePhone(phone),
+        email: normalizeEmail(email),
         otp,
         firstName: firstName.trim() || undefined,
         lastName: lastName.trim() || undefined,
@@ -68,38 +76,39 @@ export function PhoneOtpFlow({ heading, subheading, askName }: PhoneOtpFlowProps
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-10">
       <div className="mb-6 text-center">
         <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-          <Phone className="size-6" aria-hidden />
+          <Mail className="size-6" aria-hidden />
         </span>
         <h1 className="text-xl font-bold">{heading}</h1>
         <p className="mt-1 text-sm text-muted">{subheading}</p>
       </div>
 
-      {step === "phone" ? (
+      {step === "email" ? (
         <form onSubmit={handleSendOtp} className="flex flex-col gap-3">
-          <label className="text-sm font-medium" htmlFor="phone">
-            Telefon raqam
+          <label className="text-sm font-medium" htmlFor="email">
+            Gmail / Email
           </label>
           <input
-            id="phone"
-            type="tel"
-            inputMode="tel"
+            id="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
             autoFocus
             required
-            placeholder="+998 90 123 45 67"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            placeholder="example@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="h-12 rounded-xl border border-border bg-transparent px-4 text-sm outline-none focus:border-primary"
           />
           {error && <p className="text-sm text-danger">{error}</p>}
           <Button type="submit" loading={sendOtp.isPending} fullWidth size="lg">
-            SMS-kod olish
+            Email-kod olish
           </Button>
         </form>
       ) : (
         <form onSubmit={handleVerifyOtp} className="flex flex-col gap-3">
           <p className="text-sm text-muted">
-            <span className="font-medium text-foreground">{normalizePhone(phone)}</span> raqamiga yuborilgan
-            6 xonali kodni kiriting.
+            <span className="font-medium text-foreground">{normalizeEmail(email)}</span> manziliga yuborilgan 6
+            xonali kodni kiriting.
           </p>
           {debugOtp && (
             <p className="rounded-lg bg-accent/10 px-3 py-2 text-xs text-accent">
@@ -144,10 +153,10 @@ export function PhoneOtpFlow({ heading, subheading, askName }: PhoneOtpFlowProps
           </Button>
           <button
             type="button"
-            onClick={() => setStep("phone")}
+            onClick={() => setStep("email")}
             className="cursor-pointer text-center text-sm text-muted underline underline-offset-4"
           >
-            Raqamni o&apos;zgartirish
+            Emailni o&apos;zgartirish
           </button>
         </form>
       )}

@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import { PhoneOtpFlow } from "@/components/auth/PhoneOtpFlow";
+import { EmailOtpFlow } from "@/components/auth/EmailOtpFlow";
 
 export default function RegisterPage() {
   return (
     <Suspense>
-      <PhoneOtpFlow
+      <EmailOtpFlow
         heading="Ro'yxatdan o'tish"
-        subheading="Telefon raqamingizga bir martalik kod yuboramiz"
+        subheading="Gmail manzilingizga bir martalik kod yuboramiz"
         askName
       />
     </Suspense>

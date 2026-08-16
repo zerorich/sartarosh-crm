@@ -1,5 +1,5 @@
 import { Banknote } from "lucide-react";
-import { formatDateWithWeekday, formatMoney, formatTime } from "@/lib/utils";
+import { cn, formatDateWithWeekday, formatMoney, formatTime } from "@/lib/utils";
 
 interface BookingSummaryProps {
   salonName: string;
@@ -14,7 +14,7 @@ function Row({ label, value, strong }: { label: string; value: React.ReactNode; 
   return (
     <div className="flex items-center justify-between py-2 text-sm">
       <span className="text-muted">{label}</span>
-      <span className={strong ? "font-semibold" : "font-medium"}>{value}</span>
+      <span className={cn("text-right", strong ? "text-base font-bold text-foreground" : "font-medium")}>{value}</span>
     </div>
   );
 }
@@ -28,13 +28,13 @@ export function BookingSummary({
   couponLabel,
 }: BookingSummaryProps) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-4">
+    <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
       <Row label="Salon" value={salonName} />
       <Row label="Sartarosh" value={barberName} />
       <Row label="Xizmat" value={serviceName} />
       <Row label="Sana" value={formatDateWithWeekday(startAt)} />
       <Row label="Vaqt" value={formatTime(startAt)} />
-      <div className="my-1 border-t border-border" />
+      <div className="my-1.5 border-t border-dashed border-border" />
       {couponLabel && <Row label="Kupon" value={couponLabel} />}
       <Row label="Narx" value={formatMoney(price)} strong />
       <div className="mt-3 flex items-center gap-2 rounded-xl bg-surface-muted p-3 text-xs text-muted">

@@ -88,17 +88,17 @@ export const swaggerSpec = swaggerJsdoc({
         },
         SendOtpRequest: {
           type: "object",
-          required: ["phone"],
+          required: ["email"],
           properties: {
-            phone: { type: "string", example: "+998901234567" },
+            email: { type: "string", format: "email", example: "user@example.com" },
             role: { type: "string", enum: ["CLIENT", "BARBER", "OWNER"], default: "CLIENT" },
           },
         },
         VerifyOtpRequest: {
           type: "object",
-          required: ["phone", "otp"],
+          required: ["email", "otp"],
           properties: {
-            phone: { type: "string" },
+            email: { type: "string", format: "email" },
             otp: { type: "string", example: "123456" },
             role: { type: "string", enum: ["CLIENT", "BARBER", "OWNER"] },
             firstName: { type: "string" },
@@ -115,6 +115,23 @@ export const swaggerSpec = swaggerJsdoc({
           type: "object",
           properties: {
             refreshToken: { type: "string" },
+          },
+        },
+        User: {
+          type: "object",
+          required: ["id", "email", "role"],
+          properties: {
+            id: { type: "string", format: "uuid" },
+            email: { type: "string", format: "email", example: "user@example.com" },
+            role: { type: "string", enum: ["CLIENT", "BARBER", "OWNER", "ADMIN", "SUPER_ADMIN"] },
+            firstName: { type: "string", nullable: true },
+            lastName: { type: "string", nullable: true },
+            avatarUrl: { type: "string", format: "uri", nullable: true },
+            isBlocked: { type: "boolean" },
+            noShowCount: { type: "integer" },
+            restrictedUntil: { type: "string", format: "date-time", nullable: true },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
           },
         },
         WorkingHour: {
@@ -161,9 +178,9 @@ export const swaggerSpec = swaggerJsdoc({
         },
         InviteStaff: {
           type: "object",
-          required: ["barberPhone"],
+          required: ["barberEmail"],
           properties: {
-            barberPhone: { type: "string" },
+            barberEmail: { type: "string", format: "email" },
             salaryType: { type: "string", enum: ["FIXED", "PERCENTAGE", "FIXED_PLUS_PERCENTAGE"] },
             salaryFixed: { type: "number" },
             salaryPercent: { type: "number", minimum: 0, maximum: 100 },

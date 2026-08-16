@@ -14,7 +14,7 @@ import { RejectSalonModal } from "@/features/salon-actions/ui/RejectSalonModal";
 import { BlockSalonModal } from "@/features/salon-actions/ui/BlockSalonModal";
 import { DetailSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { ErrorState } from "@/shared/ui/ErrorState";
-import { formatDate, formatCurrency, formatPhone } from "@/shared/lib/utils";
+import { formatDate, formatEmail } from "@/shared/lib/utils";
 import {
   ArrowLeft,
   Building2,
@@ -24,7 +24,6 @@ import {
   CheckCircle,
   XCircle,
   ShieldBan,
-  Users,
   Scissors,
   DollarSign,
   AlertCircle,
@@ -229,7 +228,7 @@ export function SalonDetailPage({ id }: { id: string }) {
                     {salon.owner.user.firstName} {salon.owner.user.lastName}
                   </p>
                   <p className="text-slate-500 font-mono">
-                    {formatPhone(salon.owner.user.phone)}
+                    {formatEmail(salon.owner.user.email)}
                   </p>
                   <Link
                     href={`/admin/users/${salon.owner.user.id}`}
@@ -256,79 +255,43 @@ export function SalonDetailPage({ id }: { id: string }) {
         </Card>
       </div>
 
-      {/* Services List Preview */}
+      {/* Salon Activity Summary */}
       <Card>
         <CardHeader
           title={
             <div className="flex items-center gap-2">
               <Scissors className="w-5 h-5 text-indigo-500" />
-              <span>Services Catalog</span>
+              <span>Salon Activity Summary</span>
             </div>
           }
-          subtitle="All active grooming services offered at this salon location"
+          subtitle="Aggregate counts of services, staff, bookings, and reviews for this location"
         />
         <CardBody className="p-0">
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {[
-              { name: "Classic Haircut & Styling", duration: 45, price: 120000 },
-              { name: "Beard Trim & Hot Towel Treatment", duration: 30, price: 80000 },
-              { name: "Royal Hair & Beard Grooming Package", duration: 75, price: 220000 },
-              { name: "Kids Haircut (under 12)", duration: 30, price: 70000 },
-            ].map((srv, idx) => (
-              <div key={idx} className="flex items-center justify-between p-4 px-6 text-xs sm:text-sm">
-                <div>
-                  <p className="font-bold text-slate-900 dark:text-white">{srv.name}</p>
-                  <p className="text-xs text-slate-400">{srv.duration} minutes</p>
-                </div>
-                <div className="text-right font-extrabold text-slate-900 dark:text-white font-mono">
-                  {formatCurrency(srv.price)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
-
-      {/* Staff Barbers */}
-      <Card>
-        <CardHeader
-          title={
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-500" />
-              <span>Affiliated Barbers</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-slate-100 dark:divide-slate-800">
+            <div className="p-5 text-center space-y-1">
+              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                {salon._count?.services ?? "—"}
+              </p>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Services</p>
             </div>
-          }
-          subtitle="Barbers currently working at this salon"
-        />
-        <CardBody className="p-0">
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {[
-              { id: "brb-001", name: "Sardor Karimov", phone: "998935552211", rating: 4.9, reviews: 128 },
-              { id: "brb-002", name: "Jasur Aliyev", phone: "998971113344", rating: 4.8, reviews: 96 },
-            ].map((barber) => (
-              <div key={barber.id} className="flex items-center justify-between p-4 px-6">
-                <div className="flex items-center gap-3">
-                  <UserAvatar firstName={barber.name} size="sm" />
-                  <div>
-                    <Link
-                      href={`/admin/barbers/${barber.id}`}
-                      className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white hover:text-rose-600 transition-colors"
-                    >
-                      {barber.name}
-                    </Link>
-                    <p className="text-xs text-slate-400 font-mono">{formatPhone(barber.phone)}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <BarberRating rating={barber.rating} reviewCount={barber.reviews} />
-                  <Link href={`/admin/barbers/${barber.id}`}>
-                    <Button variant="outline" size="sm">
-                      Profile
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
+            <div className="p-5 text-center space-y-1">
+              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                {salon._count?.staff ?? "—"}
+              </p>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Barbers</p>
+            </div>
+            <div className="p-5 text-center space-y-1">
+              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                {salon._count?.bookings ?? "—"}
+              </p>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Bookings</p>
+            </div>
+            <div className="p-5 text-center space-y-1">
+              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                {salon._count?.reviews ?? "—"}
+              </p>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Reviews</p>
+            </div>
           </div>
         </CardBody>
       </Card>
