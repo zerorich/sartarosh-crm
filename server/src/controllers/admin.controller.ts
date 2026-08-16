@@ -4,10 +4,15 @@ import {
   approveSalon,
   blockSalon,
   blockUser,
+  deleteReview,
   getAdminSettings,
+  getBarberById,
+  getBookingById,
   getReports,
+  getSalonById,
   getUserById,
   hideReview,
+  listBarbers,
   listBookings,
   listPayments,
   listReviews,
@@ -17,6 +22,7 @@ import {
   rejectSalon,
   restoreReview,
 } from "../services/admin.service";
+import { refundPayment } from "../services/payment.service";
 import { ok, paginated } from "../utils/api-response";
 import { asyncHandler } from "../utils/async-handler";
 import { routeParam, routeQuery } from "../utils/route-params";
@@ -66,6 +72,11 @@ export const getSalons = asyncHandler(async (req: Request, res: Response) => {
   return paginated(res, result);
 });
 
+export const getSalon = asyncHandler(async (req: Request, res: Response) => {
+  const salon = await getSalonById(routeParam(req));
+  return ok(res, salon);
+});
+
 export const patchApproveSalon = asyncHandler(async (req: Request, res: Response) => {
   const salon = await approveSalon(routeParam(req), req.user!.id);
   return ok(res, salon);
@@ -90,6 +101,11 @@ export const getBookings = asyncHandler(async (req: Request, res: Response) => {
     salonId: query.salonId,
   });
   return paginated(res, result);
+});
+
+export const getBooking = asyncHandler(async (req: Request, res: Response) => {
+  const booking = await getBookingById(routeParam(req));
+  return ok(res, booking);
 });
 
 export const getPayments = asyncHandler(async (req: Request, res: Response) => {
@@ -120,6 +136,36 @@ export const patchHideReview = asyncHandler(async (req: Request, res: Response) 
 export const patchRestoreReview = asyncHandler(async (req: Request, res: Response) => {
   const review = await restoreReview(routeParam(req), req.user!.id);
   return ok(res, review);
+});
+
+export const removeReview = asyncHandler(async (req: Request, res: Response) => {
+  const review = await deleteReview(routeParam(req), req.user!.id);
+  return ok(res, review);
+});
+
+export const getBarbers = asyncHandler(async (req: Request, res: Response) => {
+  const query = routeQuery<{ page: number; limit: number; search?: string; salonId?: string }>(req);
+  const result = await listBarbers({
+    page: query.page,
+    limit: query.limit,
+    search: query.search,
+    salonId: query.salonId,
+  });
+  return paginated(res, result);
+});
+
+export const getBarber = asyncHandler(async (req: Request, res: Response) => {
+  const barber = await getBarberById(routeParam(req));
+  return ok(res, barber);
+});
+
+export const refundPaymentAdmin = asyncHandler(async (req: Request, res: Response) => {
+  const payment = await refundPayment(
+    routeParam(req),
+    { id: req.user!.id, role: req.user!.role, ownerProfileId: req.user!.ownerProfileId },
+    req.body.reason,
+  );
+  return ok(res, payment);
 });
 
 export const getAdminReports = asyncHandler(async (_req: Request, res: Response) => {

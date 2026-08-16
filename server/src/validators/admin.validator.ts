@@ -52,6 +52,11 @@ export const adminSettingsPatchSchema = z.object({
   reminder30mEnabled: z.coerce.boolean().optional(),
 });
 
+export const adminBarberListQuerySchema = paginationSchema.extend({
+  search: z.string().trim().optional(),
+  salonId: uuidSchema.optional(),
+});
+
 export const adminIdParamSchema = z.object({
   id: uuidSchema,
 });

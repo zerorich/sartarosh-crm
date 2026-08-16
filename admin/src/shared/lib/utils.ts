@@ -5,13 +5,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatNumber(amount: number | string | null | undefined): string {
+  if (amount === null || amount === undefined) return "0";
+  const num = typeof amount === "string" ? parseFloat(amount) : amount;
+  if (isNaN(num)) return "0";
+  return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
 export function formatCurrency(amount: number | string, currency: string = "UZS"): string {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
   if (isNaN(num)) return "0 " + currency;
-  return new Intl.NumberFormat("uz-UZ", {
-    style: "decimal",
-    maximumFractionDigits: 0,
-  }).format(num) + " " + currency;
+  const formatted = Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${formatted} ${currency}`;
 }
 
 export function formatDate(date: string | Date | null | undefined): string {

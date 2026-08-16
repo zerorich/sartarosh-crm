@@ -446,53 +446,279 @@ const mockBookings = [
   {
     id: "bk-1001",
     clientId: "usr-005",
-    client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
+    client: {
+      id: "usr-005",
+      firstName: "Aziz",
+      lastName: "Nematov",
+      phone: "998998887766",
+      avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80",
+    },
     salonId: "sal-001",
-    salon: { id: "sal-001", name: "The Barber Lounge" },
+    salon: {
+      id: "sal-001",
+      name: "The Barber Lounge",
+      address: "Chilonzor, Makro atrofi 14/2",
+      phone: "+998 71 200 44 88",
+    },
     barberId: "brb-001",
-    barber: { id: "brb-001", user: { id: "usr-003", firstName: "Sardor", lastName: "Karimov" } },
-    service: { id: "srv-01", name: "Classic Fade & Styling", price: 120000 },
+    barber: {
+      id: "brb-001",
+      user: {
+        id: "usr-003",
+        firstName: "Sardor",
+        lastName: "Karimov",
+        phone: "998935552211",
+        avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      },
+    },
+    serviceId: "srv-01",
+    service: {
+      id: "srv-01",
+      name: "Classic Fade & Styling",
+      durationMinutes: 45,
+      price: 120000,
+    },
     status: "CONFIRMED",
     startAt: "2024-06-16T14:00:00Z",
     endAt: "2024-06-16T14:45:00Z",
+    scheduledStartAt: "2024-06-16T14:00:00Z",
+    scheduledEndAt: "2024-06-16T14:45:00Z",
+    actualStartAt: "2024-06-16T14:07:00Z",
+    actualEndAt: "2024-06-16T14:52:00Z",
+    delayMinutes: 7,
+    compensationPercent: 10,
     price: 120000,
     depositAmount: 30000,
     remainingAmount: 90000,
+    couponId: "cp-771",
+    coupon: {
+      id: "cp-771",
+      reason: "BARBER_LATE",
+      type: "PERCENTAGE",
+      value: 10,
+      expiresAt: "2024-07-16T14:00:00Z",
+    },
+    payments: [
+      {
+        id: "pay-501",
+        amount: 30000,
+        method: "ONLINE",
+        type: "DEPOSIT",
+        status: "PAID",
+        providerRef: "payme_txn_994821",
+        createdAt: "2024-06-15T18:21:00Z",
+      },
+    ],
     createdAt: "2024-06-15T18:20:00Z",
   },
   {
     id: "bk-1002",
     clientId: "usr-006",
-    client: { id: "usr-006", firstName: "Davron", lastName: "Saidov", phone: "998912345678" },
+    client: {
+      id: "usr-006",
+      firstName: "Davron",
+      lastName: "Saidov",
+      phone: "998912345678",
+      avatarUrl: null,
+    },
     salonId: "sal-002",
-    salon: { id: "sal-002", name: "CutMaster Studio" },
+    salon: {
+      id: "sal-002",
+      name: "CutMaster Studio",
+      address: "Yunusobod, 22-mavze, 4A",
+      phone: "+998 71 201 55 99",
+    },
     barberId: "brb-002",
-    barber: { id: "brb-002", user: { id: "usr-004", firstName: "Jasur", lastName: "Aliyev" } },
-    service: { id: "srv-02", name: "Beard Trim & Hot Towel", price: 80000 },
+    barber: {
+      id: "brb-002",
+      user: {
+        id: "usr-004",
+        firstName: "Jasur",
+        lastName: "Aliyev",
+        phone: "998971113344",
+        avatarUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80",
+      },
+    },
+    serviceId: "srv-02",
+    service: {
+      id: "srv-02",
+      name: "Beard Trim & Hot Towel",
+      durationMinutes: 30,
+      price: 80000,
+    },
     status: "COMPLETED",
     startAt: "2024-06-16T11:00:00Z",
     endAt: "2024-06-16T11:30:00Z",
+    scheduledStartAt: "2024-06-16T11:00:00Z",
+    scheduledEndAt: "2024-06-16T11:30:00Z",
+    actualStartAt: "2024-06-16T11:00:00Z",
+    actualEndAt: "2024-06-16T11:30:00Z",
+    delayMinutes: 0,
+    compensationPercent: 0,
     price: 80000,
     depositAmount: 16000,
     remainingAmount: 64000,
+    payments: [
+      {
+        id: "pay-502",
+        amount: 80000,
+        method: "CARD",
+        type: "FULL",
+        status: "PAID",
+        providerRef: "click_txn_778123",
+        createdAt: "2024-06-16T11:32:00Z",
+      },
+    ],
     createdAt: "2024-06-14T09:10:00Z",
   },
   {
     id: "bk-1003",
     clientId: "usr-005",
-    client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
+    client: {
+      id: "usr-005",
+      firstName: "Aziz",
+      lastName: "Nematov",
+      phone: "998998887766",
+      avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80",
+    },
     salonId: "sal-003",
-    salon: { id: "sal-003", name: "Barber City IT Park" },
+    salon: {
+      id: "sal-003",
+      name: "Barber City IT Park",
+      address: "Mirzo Ulug'bek, IT Park binosi",
+      phone: "+998 71 203 11 22",
+    },
     barberId: "brb-003",
-    barber: { id: "brb-003", user: { id: "usr-008", firstName: "Shavkat", lastName: "Rahimov" } },
-    service: { id: "srv-03", name: "Full Royal Grooming", price: 250000 },
+    barber: {
+      id: "brb-003",
+      user: {
+        id: "usr-008",
+        firstName: "Shavkat",
+        lastName: "Rahimov",
+        phone: "998931239874",
+        avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
+      },
+    },
+    serviceId: "srv-03",
+    service: {
+      id: "srv-03",
+      name: "Full Royal Grooming",
+      durationMinutes: 60,
+      price: 250000,
+    },
     status: "IN_PROGRESS",
     startAt: "2024-06-16T15:30:00Z",
     endAt: "2024-06-16T16:30:00Z",
+    scheduledStartAt: "2024-06-16T15:30:00Z",
+    scheduledEndAt: "2024-06-16T16:30:00Z",
+    actualStartAt: "2024-06-16T15:33:00Z",
+    actualEndAt: null,
+    delayMinutes: 3,
+    compensationPercent: 0,
     price: 250000,
     depositAmount: 75000,
     remainingAmount: 175000,
+    payments: [
+      {
+        id: "pay-503",
+        amount: 75000,
+        method: "ONLINE",
+        type: "DEPOSIT",
+        status: "PAID",
+        providerRef: "payme_txn_994899",
+        createdAt: "2024-06-16T08:05:00Z",
+      },
+    ],
     createdAt: "2024-06-16T08:00:00Z",
+  },
+  {
+    id: "bk-1004",
+    clientId: "usr-006",
+    client: {
+      id: "usr-006",
+      firstName: "Davron",
+      lastName: "Saidov",
+      phone: "998912345678",
+      avatarUrl: null,
+    },
+    salonId: "sal-001",
+    salon: {
+      id: "sal-001",
+      name: "The Barber Lounge",
+      address: "Chilonzor, Makro atrofi 14/2",
+      phone: "+998 71 200 44 88",
+    },
+    barberId: "brb-001",
+    barber: {
+      id: "brb-001",
+      user: {
+        id: "usr-003",
+        firstName: "Sardor",
+        lastName: "Karimov",
+        phone: "998935552211",
+      },
+    },
+    serviceId: "srv-01",
+    service: {
+      id: "srv-01",
+      name: "Classic Fade & Styling",
+      durationMinutes: 45,
+      price: 120000,
+    },
+    status: "NO_SHOW",
+    startAt: "2024-06-15T16:00:00Z",
+    endAt: "2024-06-15T16:45:00Z",
+    scheduledStartAt: "2024-06-15T16:00:00Z",
+    scheduledEndAt: "2024-06-15T16:45:00Z",
+    actualStartAt: null,
+    actualEndAt: null,
+    delayMinutes: 0,
+    compensationPercent: 0,
+    price: 120000,
+    depositAmount: 30000,
+    remainingAmount: 90000,
+    createdAt: "2024-06-14T12:00:00Z",
+  },
+  {
+    id: "bk-1005",
+    clientId: "usr-005",
+    client: {
+      id: "usr-005",
+      firstName: "Aziz",
+      lastName: "Nematov",
+      phone: "998998887766",
+    },
+    salonId: "sal-002",
+    salon: {
+      id: "sal-002",
+      name: "CutMaster Studio",
+      address: "Yunusobod, 22-mavze, 4A",
+    },
+    barberId: "brb-002",
+    barber: {
+      id: "brb-002",
+      user: {
+        id: "usr-004",
+        firstName: "Jasur",
+        lastName: "Aliyev",
+      },
+    },
+    serviceId: "srv-02",
+    service: {
+      id: "srv-02",
+      name: "Beard Trim & Hot Towel",
+      price: 80000,
+    },
+    status: "CANCELLED",
+    startAt: "2024-06-13T10:00:00Z",
+    endAt: "2024-06-13T10:30:00Z",
+    scheduledStartAt: "2024-06-13T10:00:00Z",
+    scheduledEndAt: "2024-06-13T10:30:00Z",
+    cancelReason: "Client had sudden flight change",
+    price: 80000,
+    depositAmount: 16000,
+    remainingAmount: 64000,
+    createdAt: "2024-06-12T15:00:00Z",
   },
 ];
 
@@ -501,45 +727,84 @@ const mockPayments = [
     id: "pay-501",
     bookingId: "bk-1001",
     amount: 30000,
-    method: "ONLINE",
-    type: "DEPOSIT",
-    status: "PAID",
+    method: "ONLINE" as const,
+    type: "DEPOSIT" as const,
+    status: "PAID" as const,
     providerRef: "payme_txn_994821",
+    signature: "sig_payme_0019284",
+    verifiedAt: "2024-06-15T18:21:05Z",
+    refundedAt: null,
+    refundReason: null,
     createdAt: "2024-06-15T18:21:00Z",
     booking: {
       id: "bk-1001",
-      salon: { id: "sal-001", name: "The Barber Lounge" },
-      client: { id: "usr-005", phone: "998998887766" },
+      startAt: "2024-06-16T14:00:00Z",
+      price: 120000,
+      salon: { id: "sal-001", name: "The Barber Lounge", address: "Chilonzor, Makro atrofi 14/2" },
+      client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
     },
   },
   {
     id: "pay-502",
     bookingId: "bk-1002",
     amount: 80000,
-    method: "CARD",
-    type: "FULL",
-    status: "PAID",
+    method: "CARD" as const,
+    type: "FULL" as const,
+    status: "PAID" as const,
     providerRef: "click_txn_778123",
+    signature: "sig_click_991823",
+    verifiedAt: "2024-06-16T11:32:05Z",
+    refundedAt: null,
+    refundReason: null,
     createdAt: "2024-06-16T11:32:00Z",
     booking: {
       id: "bk-1002",
-      salon: { id: "sal-002", name: "CutMaster Studio" },
-      client: { id: "usr-006", phone: "998912345678" },
+      startAt: "2024-06-16T11:00:00Z",
+      price: 80000,
+      salon: { id: "sal-002", name: "CutMaster Studio", address: "Yunusobod, 22-mavze, 4A" },
+      client: { id: "usr-006", firstName: "Davron", lastName: "Saidov", phone: "998912345678" },
     },
   },
   {
     id: "pay-503",
     bookingId: "bk-1003",
     amount: 75000,
-    method: "ONLINE",
-    type: "DEPOSIT",
-    status: "PAID",
+    method: "ONLINE" as const,
+    type: "DEPOSIT" as const,
+    status: "PAID" as const,
     providerRef: "payme_txn_994899",
+    signature: "sig_payme_0081273",
+    verifiedAt: "2024-06-16T08:05:05Z",
+    refundedAt: null,
+    refundReason: null,
     createdAt: "2024-06-16T08:05:00Z",
     booking: {
       id: "bk-1003",
-      salon: { id: "sal-003", name: "Barber City IT Park" },
-      client: { id: "usr-005", phone: "998998887766" },
+      startAt: "2024-06-16T15:30:00Z",
+      price: 250000,
+      salon: { id: "sal-003", name: "Barber City IT Park", address: "Mirzo Ulug'bek, IT Park" },
+      client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
+    },
+  },
+  {
+    id: "pay-504",
+    bookingId: "bk-1005",
+    amount: 16000,
+    method: "ONLINE" as const,
+    type: "DEPOSIT" as const,
+    status: "REFUNDED" as const,
+    providerRef: "payme_txn_771822",
+    signature: "sig_payme_001712",
+    verifiedAt: "2024-06-12T15:01:00Z",
+    refundedAt: "2024-06-13T09:00:00Z",
+    refundReason: "Booking cancelled within allowable free cancellation window (24h).",
+    createdAt: "2024-06-12T15:00:00Z",
+    booking: {
+      id: "bk-1005",
+      startAt: "2024-06-13T10:00:00Z",
+      price: 80000,
+      salon: { id: "sal-002", name: "CutMaster Studio", address: "Yunusobod, 22-mavze, 4A" },
+      client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
     },
   },
 ];
@@ -548,8 +813,11 @@ const mockReviews = [
   {
     id: "rev-201",
     bookingId: "bk-1002",
+    clientId: "usr-006",
     client: { id: "usr-006", firstName: "Davron", lastName: "Saidov" },
+    salonId: "sal-002",
     salon: { id: "sal-002", name: "CutMaster Studio" },
+    barberId: "brb-002",
     barber: { id: "brb-002", user: { id: "usr-004", firstName: "Jasur", lastName: "Aliyev" } },
     barberRating: 5,
     salonRating: 5,
@@ -561,8 +829,11 @@ const mockReviews = [
   {
     id: "rev-202",
     bookingId: "bk-1001",
+    clientId: "usr-005",
     client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov" },
+    salonId: "sal-001",
     salon: { id: "sal-001", name: "The Barber Lounge" },
+    barberId: "brb-001",
     barber: { id: "brb-001", user: { id: "usr-003", firstName: "Sardor", lastName: "Karimov" } },
     barberRating: 5,
     salonRating: 4,
@@ -570,6 +841,22 @@ const mockReviews = [
     comment: "Kofe va muhit zo'r, kutish vaqti deyarli bo'lmadi.",
     isHidden: false,
     createdAt: "2024-06-15T19:30:00Z",
+  },
+  {
+    id: "rev-203",
+    bookingId: "bk-0988",
+    clientId: "usr-005",
+    client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov" },
+    salonId: "sal-005",
+    salon: { id: "sal-005", name: "Grand Razor Club" },
+    barberId: "brb-003",
+    barber: { id: "brb-003", user: { id: "usr-008", firstName: "Shavkat", lastName: "Rahimov" } },
+    barberRating: 2,
+    salonRating: 2,
+    serviceRating: 1,
+    comment: "Usta 35 minutga kechikib keldi, xizmat sifati ham qoniqarsiz.",
+    isHidden: true,
+    createdAt: "2024-06-14T16:00:00Z",
   },
 ];
 
@@ -579,11 +866,14 @@ const mockComplaints = [
     clientId: "usr-005",
     client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
     salonId: "sal-005",
-    salon: { id: "sal-005", name: "Grand Razor Club" },
+    salon: { id: "sal-005", name: "Grand Razor Club", phone: "+998 71 205 99 00", address: "Yakkasaroy, Shota Rustaveli 45" },
+    barberId: "brb-003",
+    barber: { id: "brb-003", user: { firstName: "Shavkat", lastName: "Rahimov" } },
     bookingId: "bk-0988",
+    category: "BARBER_LATE" as const,
     subject: "Barber was 35 minutes late without notice",
     body: "I booked for 14:00 and the barber arrived at 14:35 without any apology. I demand compensation coupon.",
-    status: "OPEN",
+    status: "OPEN" as const,
     adminNote: null,
     handledById: null,
     createdAt: "2024-06-14T15:00:00Z",
@@ -594,33 +884,69 @@ const mockComplaints = [
     clientId: "usr-006",
     client: { id: "usr-006", firstName: "Davron", lastName: "Saidov", phone: "998912345678" },
     salonId: "sal-002",
-    salon: { id: "sal-002", name: "CutMaster Studio" },
+    salon: { id: "sal-002", name: "CutMaster Studio", phone: "+998 71 201 55 99", address: "Yunusobod, 22-mavze, 4A" },
+    barberId: "brb-002",
+    barber: { id: "brb-002", user: { firstName: "Jasur", lastName: "Aliyev" } },
     bookingId: "bk-0922",
+    category: "PAYMENT" as const,
     subject: "Overcharged for beard styling",
     body: "App showed 60,000 UZS but salon charged 80,000 UZS at desk.",
-    status: "RESOLVED",
-    adminNote: "Refunded 20,000 difference and issued 10% coupon.",
+    status: "RESOLVED" as const,
+    adminNote: "Refunded 20,000 difference and issued 10% compensation coupon.",
     handledById: "usr-001",
     createdAt: "2024-06-10T10:00:00Z",
     updatedAt: "2024-06-11T12:00:00Z",
+  },
+  {
+    id: "cmp-303",
+    clientId: "usr-005",
+    client: { id: "usr-005", firstName: "Aziz", lastName: "Nematov", phone: "998998887766" },
+    salonId: "sal-001",
+    salon: { id: "sal-001", name: "The Barber Lounge", phone: "+998 71 200 44 88", address: "Chilonzor, Makro atrofi 14/2" },
+    barberId: "brb-001",
+    barber: { id: "brb-001", user: { firstName: "Sardor", lastName: "Karimov" } },
+    bookingId: "bk-1001",
+    category: "SERVICE_QUALITY" as const,
+    subject: "Haircut did not match requested reference",
+    body: "Requested high skin fade but received low taper. Would like a free correction session.",
+    status: "IN_REVIEW" as const,
+    adminNote: "Contacted salon manager to schedule free adjustment.",
+    handledById: "usr-001",
+    createdAt: "2024-06-15T20:00:00Z",
+    updatedAt: "2024-06-16T09:00:00Z",
   },
 ];
 
 const mockSettings = {
   id: "set-001",
   noShowLimit: 3,
-  noShowRestrictionDays: 14,
+  noShowRestrictionDays: 7,
   barberDelayThreshold: 5,
   barberDelayCompensationPercent: 10,
   couponExpirationDays: 30,
   reviewEditWindow: 48,
-  defaultSearchRadius: 10,
+  defaultSearchRadius: 5,
+  cancellationWindowHours: 24,
+  defaultDepositPercent: 25,
+  allowInstantBooking: true,
   reminder24hEnabled: true,
   reminder30mEnabled: true,
-  updatedAt: "2024-06-15T10:00:00Z",
+  updatedAt: "2024-06-16T10:00:00Z",
 };
 
 const mockReports = {
+  overview: {
+    revenue: 485200000,
+    bookings: 4941,
+    users: 12482,
+    salons: 134,
+    barbers: 482,
+    noShows: 86,
+    cancellations: 210,
+    averageRating: 4.86,
+    revenueGrowth: 19.4,
+    bookingsGrowth: 14.8,
+  },
   users: [
     { role: "CLIENT", count: 11840 },
     { role: "BARBER", count: 482 },
@@ -649,6 +975,15 @@ const mockReports = {
     { status: "IN_REVIEW", count: 7 },
     { status: "RESOLVED", count: 38 },
   ],
+  timeSeries: [
+    { date: "Mon", revenue: 54000000, bookings: 540, newUsers: 140, newSalons: 4, noShowRate: 1.8 },
+    { date: "Tue", revenue: 62000000, bookings: 610, newUsers: 180, newSalons: 2, noShowRate: 2.1 },
+    { date: "Wed", revenue: 58000000, bookings: 580, newUsers: 160, newSalons: 3, noShowRate: 1.5 },
+    { date: "Thu", revenue: 71000000, bookings: 720, newUsers: 210, newSalons: 5, noShowRate: 1.7 },
+    { date: "Fri", revenue: 89000000, bookings: 890, newUsers: 290, newSalons: 6, noShowRate: 1.2 },
+    { date: "Sat", revenue: 98000000, bookings: 980, newUsers: 340, newSalons: 4, noShowRate: 1.4 },
+    { date: "Sun", revenue: 82000000, bookings: 820, newUsers: 280, newSalons: 2, noShowRate: 1.6 },
+  ],
   recentAudit: [
     {
       id: "aud-01",
@@ -673,6 +1008,14 @@ const mockReports = {
       entityId: "set-001",
       actor: { id: "usr-001", firstName: "Javodbek", lastName: "Ergashev", role: "ADMIN" },
       createdAt: "2024-06-15T16:00:00Z",
+    },
+    {
+      id: "aud-04",
+      action: "PAYMENT_REFUNDED",
+      entityType: "Payment",
+      entityId: "pay-504",
+      actor: { id: "usr-001", firstName: "Javodbek", lastName: "Ergashev", role: "ADMIN" },
+      createdAt: "2024-06-13T09:00:00Z",
     },
   ],
 };
@@ -707,6 +1050,35 @@ function getFallbackData<T>(endpoint: string, options: RequestInit & { params?: 
       const id = endpoint.split("/")[2];
       const salon = mockSalons.find((s) => s.id === id) || mockSalons[0];
       return { ...salon, status: "BLOCKED" } as unknown as T;
+    }
+    if (endpoint.includes("/payments/") && endpoint.includes("/refund")) {
+      const id = endpoint.split("/")[2];
+      const payment = mockPayments.find((p) => p.id === id) || mockPayments[0];
+      return {
+        ...payment,
+        status: "REFUNDED",
+        refundedAt: new Date().toISOString(),
+        refundReason: JSON.parse((options.body as string) || "{}").reason || "Refund requested by administrator",
+      } as unknown as T;
+    }
+    if (endpoint.includes("/reviews/") && endpoint.includes("/hide")) {
+      const id = endpoint.split("/")[2];
+      const rev = mockReviews.find((r) => r.id === id) || mockReviews[0];
+      return { ...rev, isHidden: true } as unknown as T;
+    }
+    if (endpoint.includes("/reviews/") && endpoint.includes("/restore")) {
+      const id = endpoint.split("/")[2];
+      const rev = mockReviews.find((r) => r.id === id) || mockReviews[0];
+      return { ...rev, isHidden: false } as unknown as T;
+    }
+    if (endpoint.includes("/reviews/") && method === "DELETE") {
+      return { success: true } as unknown as T;
+    }
+    if (endpoint.includes("/complaints/")) {
+      const id = endpoint.split("/")[2];
+      const comp = mockComplaints.find((c) => c.id === id) || mockComplaints[0];
+      const body = JSON.parse((options.body as string) || "{}");
+      return { ...comp, ...body, updatedAt: new Date().toISOString() } as unknown as T;
     }
     if (endpoint.includes("/settings")) {
       return { ...mockSettings, ...JSON.parse((options.body as string) || "{}") } as unknown as T;
@@ -782,31 +1154,78 @@ function getFallbackData<T>(endpoint: string, options: RequestInit & { params?: 
   }
 
   if (endpoint.startsWith("/admin/bookings") || endpoint.startsWith("/bookings")) {
+    const parts = endpoint.split("/").filter(Boolean);
+    const id = parts[parts.length - 1];
+    if (id && id !== "bookings") {
+      return (mockBookings.find((b) => b.id === id) || mockBookings[0]) as unknown as T;
+    }
+
+    let items = [...mockBookings];
+    if (params.status && params.status !== "ALL") {
+      items = items.filter((b) => b.status === params.status);
+    }
+    if (params.search) {
+      const q = String(params.search).toLowerCase();
+      items = items.filter(
+        (b) =>
+          b.id.toLowerCase().includes(q) ||
+          b.client.firstName?.toLowerCase().includes(q) ||
+          b.client.lastName?.toLowerCase().includes(q) ||
+          b.client.phone.includes(q) ||
+          b.salon.name.toLowerCase().includes(q) ||
+          b.barber.user.firstName?.toLowerCase().includes(q)
+      );
+    }
     return {
-      items: mockBookings,
-      page: 1,
-      limit: 20,
-      total: mockBookings.length,
+      items,
+      page: Number(params.page || 1),
+      limit: Number(params.limit || 20),
+      total: items.length,
       totalPages: 1,
     } as unknown as T;
   }
 
   if (endpoint.startsWith("/admin/payments") || endpoint.startsWith("/payments")) {
+    const parts = endpoint.split("/").filter(Boolean);
+    const id = parts[parts.length - 1];
+    if (id && id !== "payments") {
+      return (mockPayments.find((p) => p.id === id) || mockPayments[0]) as unknown as T;
+    }
+
+    let items = [...mockPayments];
+    if (params.status && params.status !== "ALL") {
+      items = items.filter((p) => p.status === params.status);
+    }
+    if (params.search) {
+      const q = String(params.search).toLowerCase();
+      items = items.filter(
+        (p) =>
+          p.id.toLowerCase().includes(q) ||
+          p.bookingId.toLowerCase().includes(q) ||
+          p.booking?.client.phone.includes(q) ||
+          p.booking?.salon.name.toLowerCase().includes(q) ||
+          p.providerRef?.toLowerCase().includes(q)
+      );
+    }
     return {
-      items: mockPayments,
-      page: 1,
-      limit: 20,
-      total: mockPayments.length,
+      items,
+      page: Number(params.page || 1),
+      limit: Number(params.limit || 20),
+      total: items.length,
       totalPages: 1,
     } as unknown as T;
   }
 
   if (endpoint.startsWith("/admin/reviews") || endpoint.startsWith("/reviews")) {
+    let items = [...mockReviews];
+    if (!params.includeHidden) {
+      items = items.filter((r) => !r.isHidden);
+    }
     return {
-      items: mockReviews,
-      page: 1,
-      limit: 20,
-      total: mockReviews.length,
+      items,
+      page: Number(params.page || 1),
+      limit: Number(params.limit || 20),
+      total: items.length,
       totalPages: 1,
     } as unknown as T;
   }
@@ -817,11 +1236,29 @@ function getFallbackData<T>(endpoint: string, options: RequestInit & { params?: 
     if (id && id !== "complaints") {
       return (mockComplaints.find((c) => c.id === id) || mockComplaints[0]) as unknown as T;
     }
+
+    let items = [...mockComplaints];
+    if (params.status && params.status !== "ALL") {
+      items = items.filter((c) => c.status === params.status);
+    }
+    if (params.category && params.category !== "ALL") {
+      items = items.filter((c) => c.category === params.category);
+    }
+    if (params.search) {
+      const q = String(params.search).toLowerCase();
+      items = items.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.subject.toLowerCase().includes(q) ||
+          c.client.phone.includes(q) ||
+          c.client.firstName?.toLowerCase().includes(q)
+      );
+    }
     return {
-      items: mockComplaints,
-      page: 1,
-      limit: 20,
-      total: mockComplaints.length,
+      items,
+      page: Number(params.page || 1),
+      limit: Number(params.limit || 20),
+      total: items.length,
       totalPages: 1,
     } as unknown as T;
   }
@@ -845,3 +1282,4 @@ export const api = {
     request<T>(url, { method: "PATCH", body: JSON.stringify(data) }),
   delete: <T>(url: string) => request<T>(url, { method: "DELETE" }),
 };
+

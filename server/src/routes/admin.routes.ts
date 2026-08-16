@@ -1,9 +1,13 @@
 import { Router } from "express";
 import {
   getAdminReports,
+  getBarber,
+  getBarbers,
+  getBooking,
   getBookings,
   getPayments,
   getReviews,
+  getSalon,
   getSalons,
   getSettings,
   getUser,
@@ -16,12 +20,15 @@ import {
   patchRestoreReview,
   patchSettings,
   patchUnblockUser,
+  refundPaymentAdmin,
+  removeReview,
 } from "../controllers/admin.controller";
 import { getComplaint, getComplaints, patchComplaint } from "../controllers/complaint.controller";
 import { authenticate } from "../middleware/authenticate";
 import { authorize } from "../middleware/authorize";
 import { validate } from "../middleware/validate";
 import {
+  adminBarberListQuerySchema,
   adminBookingListQuerySchema,
   adminIdParamSchema,
   adminPaymentListQuerySchema,
@@ -38,6 +45,7 @@ import {
   complaintListQuerySchema,
   updateComplaintSchema,
 } from "../validators/complaint.validator";
+import { refundPaymentSchema } from "../validators/payment.validator";
 
 export const adminRouter = Router();
 
@@ -162,6 +170,25 @@ adminRouter.get("/salons", validate(adminSalonListQuerySchema, "query"), getSalo
 
 /**
  * @openapi
+ * /api/admin/salons/{id}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get salon by id
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Salon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+adminRouter.get("/salons/:id", validate(adminIdParamSchema, "params"), getSalon);
+
+/**
+ * @openapi
  * /api/admin/salons/{id}/approve:
  *   patch:
  *     tags: [Admin]
@@ -266,6 +293,25 @@ adminRouter.get("/bookings", validate(adminBookingListQuerySchema, "query"), get
 
 /**
  * @openapi
+ * /api/admin/bookings/{id}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get booking by id
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Booking
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+adminRouter.get("/bookings/:id", validate(adminIdParamSchema, "params"), getBooking);
+
+/**
+ * @openapi
  * /api/admin/payments:
  *   get:
  *     tags: [Admin]
@@ -286,6 +332,35 @@ adminRouter.get("/bookings", validate(adminBookingListQuerySchema, "query"), get
  *               $ref: '#/components/schemas/Paginated'
  */
 adminRouter.get("/payments", validate(adminPaymentListQuerySchema, "query"), getPayments);
+
+/**
+ * @openapi
+ * /api/admin/payments/{id}/refund:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Refund a payment (admin)
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PaymentRefund'
+ *     responses:
+ *       200:
+ *         description: Payment refunded
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+adminRouter.patch(
+  "/payments/:id/refund",
+  validate(adminIdParamSchema, "params"),
+  validate(refundPaymentSchema),
+  refundPaymentAdmin,
+);
 
 /**
  * @openapi
@@ -350,6 +425,25 @@ adminRouter.patch("/reviews/:id/restore", validate(adminIdParamSchema, "params")
 
 /**
  * @openapi
+ * /api/admin/reviews/{id}:
+ *   delete:
+ *     tags: [Admin]
+ *     summary: Delete review permanently
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Review deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+adminRouter.delete("/reviews/:id", validate(adminIdParamSchema, "params"), removeReview);
+
+/**
+ * @openapi
  * /api/admin/reports:
  *   get:
  *     tags: [Admin]
@@ -398,6 +492,51 @@ adminRouter.get("/reports", getAdminReports);
  */
 adminRouter.get("/settings", getSettings);
 adminRouter.patch("/settings", validate(adminSettingsPatchSchema), patchSettings);
+
+/**
+ * @openapi
+ * /api/admin/barbers:
+ *   get:
+ *     tags: [Admin]
+ *     summary: List barbers
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/PageQuery'
+ *       - $ref: '#/components/parameters/LimitQuery'
+ *       - name: search
+ *         in: query
+ *         schema: { type: string }
+ *       - name: salonId
+ *         in: query
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Paginated barbers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Paginated'
+ */
+adminRouter.get("/barbers", validate(adminBarberListQuerySchema, "query"), getBarbers);
+
+/**
+ * @openapi
+ * /api/admin/barbers/{id}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get barber by id
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Barber
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+adminRouter.get("/barbers/:id", validate(adminIdParamSchema, "params"), getBarber);
 
 /**
  * @openapi

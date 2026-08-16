@@ -259,6 +259,117 @@ export async function listReviews(params: { page: number; limit: number; include
   return { items, page: params.page, limit: params.limit, total };
 }
 
+export async function getSalonById(salonId: string) {
+  const salon = await prisma.salon.findUnique({
+    where: { id: salonId },
+    include: {
+      owner: {
+        include: { user: { select: { id: true, phone: true, firstName: true, lastName: true } } },
+      },
+      _count: {
+        select: { staff: true, bookings: true, reviews: true, services: true },
+      },
+    },
+  });
+
+  if (!salon) throw AppError.notFound("Salon not found");
+  return salon;
+}
+
+export async function getBookingById(bookingId: string) {
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      client: { select: { id: true, phone: true, firstName: true, lastName: true, avatarUrl: true } },
+      salon: { select: { id: true, name: true, address: true, phone: true } },
+      barber: { include: { user: { select: { id: true, firstName: true, lastName: true, phone: true, avatarUrl: true } } } },
+      service: { select: { id: true, name: true, durationMinutes: true, price: true } },
+      payments: true,
+      coupon: true,
+    },
+  });
+
+  if (!booking) throw AppError.notFound("Booking not found");
+  return booking;
+}
+
+export async function listBarbers(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  salonId?: string;
+}) {
+  const where: Prisma.BarberProfileWhereInput = {};
+
+  if (params.search) {
+    where.user = {
+      OR: [
+        { firstName: { contains: params.search, mode: "insensitive" } },
+        { lastName: { contains: params.search, mode: "insensitive" } },
+        { phone: { contains: params.search } },
+      ],
+    };
+  }
+
+  if (params.salonId) {
+    where.staffAssignments = { some: { salonId: params.salonId, status: "ACTIVE" } };
+  }
+
+  const [items, total] = await Promise.all([
+    prisma.barberProfile.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (params.page - 1) * params.limit,
+      take: params.limit,
+      include: {
+        user: { select: { id: true, phone: true, firstName: true, lastName: true, avatarUrl: true, isBlocked: true } },
+        staffAssignments: {
+          where: { status: "ACTIVE" },
+          include: { salon: { select: { id: true, name: true } } },
+        },
+        _count: { select: { bookings: true, reviews: true } },
+      },
+    }),
+    prisma.barberProfile.count({ where }),
+  ]);
+
+  return { items, page: params.page, limit: params.limit, total };
+}
+
+export async function getBarberById(barberId: string) {
+  const barber = await prisma.barberProfile.findUnique({
+    where: { id: barberId },
+    include: {
+      user: { select: { id: true, phone: true, firstName: true, lastName: true, avatarUrl: true, isBlocked: true, createdAt: true } },
+      staffAssignments: {
+        where: { status: "ACTIVE" },
+        include: { salon: { select: { id: true, name: true } } },
+      },
+      _count: { select: { bookings: true, reviews: true } },
+    },
+  });
+
+  if (!barber) throw AppError.notFound("Barber not found");
+  return barber;
+}
+
+export async function deleteReview(reviewId: string, actorId: string) {
+  const review = await prisma.review.findUnique({ where: { id: reviewId } });
+  if (!review) throw AppError.notFound("Review not found");
+
+  await prisma.review.delete({ where: { id: reviewId } });
+
+  await writeAudit({
+    actorId,
+    action: "REVIEW_REMOVED",
+    entityType: "Review",
+    entityId: reviewId,
+    metadata: { permanent: true },
+  });
+
+  return review;
+}
+
 export async function getReports() {
   const [
     userCounts,

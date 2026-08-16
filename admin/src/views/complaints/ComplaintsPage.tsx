@@ -1,43 +1,72 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { AdminLayout } from "@/widgets/admin-layout/AdminLayout";
 import { DataTable, Column } from "@/shared/ui/DataTable";
+import { SearchInput } from "@/shared/ui/SearchInput";
 import { FilterDropdown } from "@/shared/ui/FilterDropdown";
 import { Button } from "@/shared/ui/Button";
 import { ComplaintStatusBadge } from "@/entities/complaint/ui/ComplaintStatusBadge";
-import { ComplaintActionModal } from "@/features/complaint-moderation/ui/ComplaintActionModal";
 import { Complaint } from "@/entities/complaint/model/types";
 import { useComplaintsQuery } from "@/entities/complaint/api/complaint.queries";
 import { formatDate, formatPhone } from "@/shared/lib/utils";
-import { AlertTriangle, Edit3, Building2 } from "lucide-react";
+import { useDebounce } from "@/shared/hooks/useDebounce";
+import { AlertTriangle, Edit3, Building2, Eye } from "lucide-react";
 
 export function ComplaintsPage() {
   const [status, setStatus] = useState("ALL");
+  const [category, setCategory] = useState("ALL");
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data, isLoading, isError, error, refetch } = useComplaintsQuery({
     page,
     limit: 20,
     status: status === "ALL" ? undefined : status,
+    category: category === "ALL" ? undefined : category,
+    search: debouncedSearch || undefined,
   });
 
   const columns: Column<Complaint>[] = [
     {
+      key: "id",
+      header: "Dispute ID",
+      render: (c) => (
+        <Link
+          href={`/admin/complaints/${c.id}`}
+          className="font-mono text-xs font-bold text-slate-900 dark:text-white hover:text-rose-600 transition-colors"
+        >
+          #{c.id}
+        </Link>
+      ),
+    },
+    {
       key: "subject",
-      header: "Complaint Subject & Details",
+      header: "Subject & Category",
       render: (c) => (
         <div className="space-y-1 max-w-sm">
-          <p className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+          <Link
+            href={`/admin/complaints/${c.id}`}
+            className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white hover:text-rose-600 transition-colors block"
+          >
             {c.subject}
-          </p>
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-            {c.body}
-          </p>
+          </Link>
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              {c.category ? c.category.replace("_", " ") : "GENERAL"}
+            </span>
+            {c.bookingId && (
+              <span className="text-[10px] text-slate-400 font-mono">
+                Booking: #{c.bookingId}
+              </span>
+            )}
+          </div>
           {c.adminNote && (
-            <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold pt-0.5">
-              Admin Note: {c.adminNote}
+            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold pt-0.5 line-clamp-1">
+              Note: {c.adminNote}
             </p>
           )}
         </div>
@@ -48,11 +77,14 @@ export function ComplaintsPage() {
       header: "Complainant",
       render: (c) => (
         <div className="space-y-0.5 text-xs">
-          <p className="font-bold text-slate-800 dark:text-slate-200">
+          <Link
+            href={`/admin/users/${c.clientId}`}
+            className="font-bold text-slate-800 dark:text-slate-200 hover:text-rose-600 transition-colors"
+          >
             {c.client.firstName || c.client.lastName
               ? `${c.client.firstName || ""} ${c.client.lastName || ""}`.trim()
               : "Client"}
-          </p>
+          </Link>
           <p className="text-slate-400 font-mono">{formatPhone(c.client.phone)}</p>
         </div>
       ),
@@ -76,7 +108,7 @@ export function ComplaintsPage() {
     },
     {
       key: "createdAt",
-      header: "Filed At",
+      header: "Filed Date",
       sortable: true,
       render: (c) => (
         <span className="text-xs text-slate-500">{formatDate(c.createdAt)}</span>
@@ -84,17 +116,14 @@ export function ComplaintsPage() {
     },
     {
       key: "actions",
-      header: "Resolution",
+      header: "Actions",
       align: "right",
       render: (c) => (
-        <Button
-          variant="outline"
-          size="sm"
-          leftIcon={<Edit3 className="w-3.5 h-3.5" />}
-          onClick={() => setSelectedComplaint(c)}
-        >
-          Manage
-        </Button>
+        <Link href={`/admin/complaints/${c.id}`}>
+          <Button variant="outline" size="sm" leftIcon={<Eye className="w-3.5 h-3.5" />}>
+            Manage
+          </Button>
+        </Link>
       ),
     },
   ];
@@ -116,23 +145,52 @@ export function ComplaintsPage() {
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="flex items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
-        <FilterDropdown
-          label="Status"
-          selectedValue={status}
+      {/* Filter & Search */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+        <SearchInput
+          placeholder="Search by dispute subject, client phone, or ID..."
+          value={search}
           onChange={(val) => {
-            setStatus(val);
+            setSearch(val);
             setPage(1);
           }}
-          options={[
-            { value: "ALL", label: "All Complaints" },
-            { value: "OPEN", label: "Open (Unresolved)" },
-            { value: "IN_REVIEW", label: "In Review" },
-            { value: "RESOLVED", label: "Resolved" },
-            { value: "REJECTED", label: "Rejected" },
-          ]}
+          className="w-full md:w-80"
         />
+
+        <div className="flex flex-wrap items-center gap-2">
+          <FilterDropdown
+            label="Category"
+            selectedValue={category}
+            onChange={(val) => {
+              setCategory(val);
+              setPage(1);
+            }}
+            options={[
+              { value: "ALL", label: "All Categories" },
+              { value: "BARBER_LATE", label: "Barber Late" },
+              { value: "SERVICE_QUALITY", label: "Service Quality" },
+              { value: "PAYMENT", label: "Payment Issue" },
+              { value: "SALON", label: "Salon Facility" },
+              { value: "OTHER", label: "Other" },
+            ]}
+          />
+
+          <FilterDropdown
+            label="Status"
+            selectedValue={status}
+            onChange={(val) => {
+              setStatus(val);
+              setPage(1);
+            }}
+            options={[
+              { value: "ALL", label: "All Statuses" },
+              { value: "OPEN", label: "Open" },
+              { value: "IN_REVIEW", label: "In Review" },
+              { value: "RESOLVED", label: "Resolved" },
+              { value: "REJECTED", label: "Rejected" },
+            ]}
+          />
+        </div>
       </div>
 
       {/* Main Table */}
@@ -153,18 +211,8 @@ export function ComplaintsPage() {
           onPageChange: setPage,
         }}
       />
-
-      {/* Action Modal */}
-      {selectedComplaint && (
-        <ComplaintActionModal
-          isOpen={!!selectedComplaint}
-          onClose={() => setSelectedComplaint(null)}
-          complaint={selectedComplaint}
-        />
-      )}
     </AdminLayout>
   );
 }
 
 export default ComplaintsPage;
-
