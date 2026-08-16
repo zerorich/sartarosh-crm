@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ADMIN_NAV_ITEMS } from "@/shared/constants/navigation";
 import { cn } from "@/shared/lib/utils";
+import { CutZoneLogo } from "@/shared/ui/CutZoneLogo";
 import { Scissors, ShieldCheck, Sparkles } from "lucide-react";
 
 export interface AdminSidebarProps {
@@ -23,19 +24,13 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
       )}
     >
       {/* Brand Logo Header */}
-      <div className="h-16 px-6 flex items-center gap-3 border-b border-slate-800/80">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-rose-600/20">
-          <Scissors className="w-5 h-5 -rotate-45" />
-        </div>
-        <div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-extrabold text-lg tracking-tight text-white">CutZone</span>
-            <span className="text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
-              Admin
-            </span>
-          </div>
-          <p className="text-[10px] text-slate-400 -mt-0.5">Enterprise Core</p>
-        </div>
+      <div className="h-16 px-4 flex items-center justify-between border-b border-slate-800/80">
+        <Link href="/admin" className="flex items-center gap-1.5 hover:opacity-95 transition-opacity">
+          <CutZoneLogo size="sm" showText={true} />
+        </Link>
+        <span className="text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
+          Admin
+        </span>
       </div>
 
       {/* Navigation Links */}
