@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="uz.sartarosh.app.ui.auth.LoginFragment"
+        android:label="@string/login_title"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_salonListFragment"
+            app:destination="@id/salonListFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/salonListFragment"
+        android:name="uz.sartarosh.app.ui.salons.SalonListFragment"
+        android:label="@string/salons_title"
+        tools:layout="@layout/fragment_salon_list">
+
+        <action
+            android:id="@+id/action_salonList_to_salonDetail"
+            app:destination="@id/salonDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/salonDetailFragment"
+        android:name="uz.sartarosh.app.ui.salons.SalonDetailFragment"
+        android:label="@string/salon_detail_title"
+        tools:layout="@layout/fragment_salon_detail">
+
+        <argument
+            android:name="salonId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_salonDetail_to_createBooking"
+            app:destination="@id/createBookingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createBookingFragment"
+        android:name="uz.sartarosh.app.ui.bookings.CreateBookingFragment"
+        android:label="@string/booking_title"
+        tools:layout="@layout/fragment_create_booking">
+
+        <argument
+            android:name="salonId"
+            app:argType="string" />
+
+        <argument
+            android:name="serviceId"
+            app:argType="string" />
+
+        <argument
+            android:name="barberId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_createBooking_to_bookingList"
+            app:destination="@id/bookingListFragment"
+            app:popUpTo="@id/salonListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bookingListFragment"
+        android:name="uz.sartarosh.app.ui.bookings.BookingListFragment"
+        android:label="@string/my_bookings"
+        tools:layout="@layout/fragment_booking_list" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="uz.sartarosh.app.ui.profile.ProfileFragment"
+        android:label="@string/profile_title"
+        tools:layout="@layout/fragment_profile" />
+
+</navigation>

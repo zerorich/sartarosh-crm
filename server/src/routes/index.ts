@@ -10,6 +10,7 @@ import { paymentsRouter } from "./payments.routes";
 import { reviewsRouter } from "./reviews.routes";
 import { salonRouter } from "./salon.routes";
 import { staffRouter } from "./staff.routes";
+import { userRouter } from "./user.routes";
 
 export const apiRouter = Router();
 
@@ -21,6 +22,7 @@ apiRouter.get("/", (_req, res) => {
       version: "1.0.0",
       routes: {
         auth: "/api/auth",
+        users: "/api/users/me",
         salons: "/api/salons",
         staff: "/api/salons/:id/staff, /api/staff/:id, /api/barbers/:id",
         catalog: "/api/salons/:id/services, /api/services/:id",
@@ -38,6 +40,7 @@ apiRouter.get("/", (_req, res) => {
 });
 
 apiRouter.use("/auth", authRouter);
+apiRouter.use("/users", userRouter);
 apiRouter.use("/salons", salonRouter);
 apiRouter.use(staffRouter);
 apiRouter.use(catalogRouter);

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Material3 dark barbershop palette -->
+    <color name="md_theme_primary">#D4AF37</color>
+    <color name="md_theme_on_primary">#1A1A1A</color>
+    <color name="md_theme_primary_container">#3D3520</color>
+    <color name="md_theme_on_primary_container">#F5E6B8</color>
+    <color name="md_theme_secondary">#C9A227</color>
+    <color name="md_theme_on_secondary">#1A1A1A</color>
+    <color name="md_theme_background">#1A1A1A</color>
+    <color name="md_theme_on_background">#F5F5F5</color>
+    <color name="md_theme_surface">#1A1A1A</color>
+    <color name="md_theme_on_surface">#F5F5F5</color>
+    <color name="md_theme_surface_variant">#2A2A2A</color>
+    <color name="md_theme_on_surface_variant">#CCCCCC</color>
+    <color name="md_theme_error">#CF6679</color>
+
+    <color name="ic_launcher_background">#1A1A1A</color>
+
+    <color name="barbershop_dark">#1A1A1A</color>
+    <color name="barbershop_surface">#242424</color>
+    <color name="barbershop_gold">#D4AF37</color>
+    <color name="barbershop_gold_dark">#B8960C</color>
+    <color name="barbershop_on_dark">#F5F5F5</color>
+    <color name="outline">#FFBDBDBD</color>
+    <color name="outline_subtle">#332A2A2A</color>
+</resources>

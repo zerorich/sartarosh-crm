@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sartarosh</string>
+
+    <!-- Вход -->
+    <string name="login_title">Sartarosh</string>
+    <string name="login_subtitle">Войдите по номеру телефона</string>
+    <string name="login_phone_hint">Телефон (E.164)</string>
+    <string name="login_default_phone">+998900000041</string>
+    <string name="login_send_otp">Отправить код</string>
+    <string name="login_otp_hint">6-значный код</string>
+    <string name="login_debug_otp_label">Код для демо (debugOtp)</string>
+    <string name="login_verify">Подтвердить и войти</string>
+    <string name="login_otp_sent">Код отправлен. Действует %1$d сек.</string>
+    <string name="login_error_phone">Введите номер в формате E.164, напр. +998900000041</string>
+    <string name="login_error_otp">Введите 6-значный код</string>
+    <string name="login_error_generic">Что-то пошло не так. Попробуйте снова.</string>
+
+    <!-- Навигация -->
+    <string name="nav_salons">Салоны</string>
+    <string name="nav_my_bookings">Записи</string>
+    <string name="nav_profile">Профиль</string>
+
+    <!-- Салоны -->
+    <string name="salons_title">Салоны</string>
+    <string name="salon_detail_title">Салон</string>
+    <string name="salons_empty">Салоны не найдены</string>
+    <string name="barbers_title">Мастера</string>
+    <string name="barbers_empty">Нет доступных мастеров</string>
+    <string name="services_title">Услуги</string>
+    <string name="services_empty">Нет доступных услуг</string>
+    <string name="book_service">Записаться</string>
+    <string name="no_barber_available">Выберите мастера или дождитесь загрузки</string>
+    <string name="salon_rating_reviews">%1$.1f (%2$d отзывов)</string>
+
+    <!-- Записи -->
+    <string name="booking_title">Запись</string>
+    <string name="bookings_title">Мои записи</string>
+    <string name="my_bookings">Мои записи</string>
+    <string name="bookings_empty">У вас пока нет записей.\nВыберите салон и запишитесь на услугу.</string>
+    <string name="bookings_load_error">Не удалось загрузить записи</string>
+    <string name="cancel_booking">Отменить</string>
+    <string name="cancel_booking_title">Отмена записи</string>
+    <string name="cancel_booking_message">Отменить запись в «%1$s»?</string>
+    <string name="cancel_reason_hint">Причина (необязательно)</string>
+    <string name="booking_cancelled">Запись отменена</string>
+    <string name="booking_created">Запись создана</string>
+    <string name="booking_error">Ошибка записи</string>
+    <string name="create_booking_subtitle">Выберите дату и время (09:00–20:00)</string>
+    <string name="pick_date">Выбрать дату</string>
+    <string name="pick_time">Выбрать время</string>
+    <string name="working_hours_hint">Запись возможна с 09:00 до 20:00</string>
+    <string name="outside_working_hours">Время должно быть между 09:00 и 20:00</string>
+    <string name="confirm_booking">Подтвердить запись</string>
+    <string name="deposit_required">Депозит: %1$s</string>
+
+    <!-- Профиль -->
+    <string name="profile_title">Профиль</string>
+    <string name="profile_phone_label">Телефон</string>
+    <string name="profile_phone_unknown">Не указан</string>
+    <string name="profile_logout">Выйти</string>
+    <string name="profile_logout_confirm">Выйти из аккаунта?</string>
+    <string name="profile_logout_success">Вы вышли из аккаунта</string>
+    <string name="profile_edit_name">Изменить имя</string>
+    <string name="profile_name_default">Гость Sartarosh</string>
+    <string name="profile_stat_bookings">Записей</string>
+    <string name="profile_stat_completed">Завершено</string>
+    <string name="profile_stat_reviews">Отзывов</string>
+    <string name="profile_member_since">Дата регистрации</string>
+    <string name="profile_edit_dialog_title">Ваше имя</string>
+    <string name="profile_first_name_hint">Имя</string>
+    <string name="profile_last_name_hint">Фамилия</string>
+    <string name="profile_save">Сохранить</string>
+    <string name="profile_cancel">Отмена</string>
+    <string name="profile_updated">Профиль обновлён</string>
+    <string name="profile_load_error">Не удалось загрузить профиль</string>
+
+    <!-- Общие -->
+    <string name="error_network">Ошибка сети. Проверьте подключение и URL API.</string>
+    <string name="error_generic">Произошла ошибка</string>
+</resources>

@@ -1,0 +1,30 @@
+# Gradle
+.gradle/
+build/
+
+# Node (leftover from scaffolding, not used by native app)
+node_modules/
+
+# Android Studio
+.idea/
+*.iml
+local.properties
+
+# Captures
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystores
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# APK outputs (optional — keep if you want to track releases)
+# *.apk
