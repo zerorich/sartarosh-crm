@@ -7,7 +7,8 @@ export function routeParam(req: Request, key = "id"): string {
 }
 
 export function routeQuery<T>(req: Request): T {
-  return req.query as unknown as T;
+  const validated = (req as Request & { validatedQuery?: unknown }).validatedQuery;
+  return (validated ?? req.query) as T;
 }
 
 export function routeBody<T>(req: Request): T {
