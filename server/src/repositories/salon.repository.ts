@@ -20,6 +20,16 @@ const publicSelect = {
   updatedAt: true,
 } satisfies Prisma.SalonSelect;
 
+export function searchWhere(search: string): Prisma.SalonWhereInput {
+  return {
+    OR: [
+      { name: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+      { city: { contains: search, mode: "insensitive" } },
+    ],
+  };
+}
+
 export const salonRepository = {
   create(data: Prisma.SalonCreateInput) {
     return prisma.salon.create({ data, select: publicSelect });
@@ -57,12 +67,20 @@ export const salonRepository = {
     return prisma.salon.count({ where });
   },
 
-  findInBoundingBox(minLat: number, maxLat: number, minLng: number, maxLng: number, status?: SalonStatus) {
+  findInBoundingBox(
+    minLat: number,
+    maxLat: number,
+    minLng: number,
+    maxLng: number,
+    status?: SalonStatus,
+    search?: string,
+  ) {
     return prisma.salon.findMany({
       where: {
         lat: { gte: minLat, lte: maxLat },
         lng: { gte: minLng, lte: maxLng },
         ...(status ? { status } : {}),
+        ...(search ? searchWhere(search) : {}),
       },
       select: publicSelect,
     });

@@ -8,6 +8,7 @@ import {
   getBookingById,
   listBookings,
   markNoShow,
+  quoteBookingPrice,
   startBooking,
 } from "../services/booking.service";
 import { AppError } from "../utils/app-error";
@@ -43,6 +44,18 @@ export async function postBooking(req: Request, res: Response) {
   });
 
   return created(res, booking);
+}
+
+export async function getQuote(req: Request, res: Response) {
+  const user = requireUser(req);
+  const { salonId, serviceId, couponId } = routeQuery<{
+    salonId: string;
+    serviceId: string;
+    couponId?: string;
+  }>(req);
+
+  const quote = await quoteBookingPrice({ clientId: user.id, salonId, serviceId, couponId });
+  return ok(res, quote);
 }
 
 export async function getBookings(req: Request, res: Response) {

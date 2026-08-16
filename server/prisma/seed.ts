@@ -48,10 +48,13 @@ async function main() {
   await prisma.workingHour.deleteMany();
   await prisma.blockedTime.deleteMany();
   await prisma.refreshToken.deleteMany();
+  // Salon.ownerId has onDelete: Restrict, so salons must go before the
+  // OwnerProfile rows they reference (otherwise re-seeding a non-empty
+  // database fails with a foreign key violation).
+  await prisma.salon.deleteMany();
   await prisma.barberProfile.deleteMany();
   await prisma.ownerProfile.deleteMany();
   await prisma.clientProfile.deleteMany();
-  await prisma.salon.deleteMany();
   await prisma.user.deleteMany();
   await prisma.adminSetting.deleteMany();
 
@@ -96,6 +99,13 @@ async function main() {
     ),
   );
 
+  const barberAvatars = [
+    "https://images.unsplash.com/photo-1618077360395-f3068be8e001?w=256&h=256&fit=crop&q=70",
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=256&h=256&fit=crop&q=70",
+    "https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?w=256&h=256&fit=crop&q=70",
+    "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=256&h=256&fit=crop&q=70",
+  ];
+
   const barbers = await Promise.all(
     Array.from({ length: 10 }, (_, i) =>
       prisma.user.create({
@@ -104,6 +114,7 @@ async function main() {
           role: Role.BARBER,
           firstName: "Barber",
           lastName: String(i + 1),
+          avatarUrl: barberAvatars[i % barberAvatars.length],
           barberProfile: { create: { bio: `Professional barber #${i + 1}` } },
         },
         include: { barberProfile: true },
@@ -126,11 +137,86 @@ async function main() {
   );
 
   const salonData = [
-    { name: "Classic Cut Tashkent", city: "Tashkent", lat: 41.311, lng: 69.279, status: SalonStatus.ACTIVE },
-    { name: "Urban Fade", city: "Tashkent", lat: 41.32, lng: 69.25, status: SalonStatus.ACTIVE },
-    { name: "Samarkand Style", city: "Samarkand", lat: 39.654, lng: 66.959, status: SalonStatus.ACTIVE },
-    { name: "Pending Salon", city: "Bukhara", lat: 39.768, lng: 64.455, status: SalonStatus.PENDING },
-    { name: "Elite Grooming", city: "Tashkent", lat: 41.29, lng: 69.24, status: SalonStatus.ACTIVE },
+    {
+      name: "Classic Cut Tashkent",
+      city: "Tashkent",
+      lat: 41.311,
+      lng: 69.279,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Urban Fade",
+      city: "Tashkent",
+      lat: 41.32,
+      lng: 69.25,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Samarkand Style",
+      city: "Samarkand",
+      lat: 39.654,
+      lng: 66.959,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Pending Salon",
+      city: "Bukhara",
+      lat: 39.768,
+      lng: 64.455,
+      status: SalonStatus.PENDING,
+      coverUrl: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Elite Grooming",
+      city: "Tashkent",
+      lat: 41.29,
+      lng: 69.24,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Chilonzor Barbers",
+      city: "Tashkent",
+      lat: 41.2856,
+      lng: 69.2034,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Yunusobod Fade Club",
+      city: "Tashkent",
+      lat: 41.3608,
+      lng: 69.2887,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Mirzo Ulugbek Barbershop",
+      city: "Tashkent",
+      lat: 41.3352,
+      lng: 69.3298,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Sergeli Style House",
+      city: "Tashkent",
+      lat: 41.2137,
+      lng: 69.2268,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=500&fit=crop&q=70",
+    },
+    {
+      name: "Andijon Premium Barbers",
+      city: "Andijon",
+      lat: 40.7821,
+      lng: 72.3442,
+      status: SalonStatus.ACTIVE,
+      coverUrl: "https://images.unsplash.com/photo-1618886614638-80e3c103d31a?w=800&h=500&fit=crop&q=70",
+    },
   ];
 
   const salons = [];
@@ -148,6 +234,7 @@ async function main() {
         lng: data.lng,
         phone: phone(100 + i),
         status: data.status,
+        coverUrl: data.coverUrl,
       },
     });
     salons.push(salon);
@@ -189,11 +276,12 @@ async function main() {
     });
   }
 
+  const activeSalons = salons.filter((s) => s.status === SalonStatus.ACTIVE);
+
   const salaryTypes: SalaryType[] = ["FIXED", "PERCENTAGE", "FIXED_PLUS_PERCENTAGE"];
   for (let i = 0; i < barbers.length; i++) {
     const barber = barbers[i]!;
-    const salon = salons[i % 4]!;
-    if (salon.status !== SalonStatus.ACTIVE) continue;
+    const salon = activeSalons[i % activeSalons.length]!;
 
     await prisma.salonStaff.create({
       data: {
@@ -241,7 +329,7 @@ async function main() {
   for (let i = 0; i < 15; i++) {
     const client = clients[i % clients.length]!;
     const barber = barbers[i % barbers.length]!;
-    const salon = salons[i % 4]!;
+    const salon = activeSalons[i % activeSalons.length]!;
     const services = servicesBySalon[salon.id] ?? [];
     const service = services[i % services.length];
     if (!service) continue;

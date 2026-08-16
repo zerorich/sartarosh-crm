@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { adminRouter } from "./admin.routes";
 import { authRouter } from "./auth.routes";
+import { availabilityRouter } from "./availability.routes";
 import { bookingsRouter } from "./bookings.routes";
 import { catalogRouter } from "./catalog.routes";
 import { complaintsRouter } from "./complaints.routes";
@@ -10,7 +11,8 @@ import { paymentsRouter } from "./payments.routes";
 import { reviewsRouter } from "./reviews.routes";
 import { salonRouter } from "./salon.routes";
 import { staffRouter } from "./staff.routes";
-import { userRouter } from "./user.routes";
+import { uploadsRouter } from "./uploads.routes";
+import { usersRouter } from "./users.routes";
 
 export const apiRouter = Router();
 
@@ -40,7 +42,7 @@ apiRouter.get("/", (_req, res) => {
 });
 
 apiRouter.use("/auth", authRouter);
-apiRouter.use("/users", userRouter);
+apiRouter.use("/users", usersRouter);
 apiRouter.use("/salons", salonRouter);
 apiRouter.use(staffRouter);
 apiRouter.use(catalogRouter);
@@ -51,3 +53,5 @@ apiRouter.use("/finance", financeRouter);
 apiRouter.use("/complaints", complaintsRouter);
 apiRouter.use("/admin", adminRouter);
 apiRouter.use("/notifications", notificationsRouter);
+apiRouter.use("/availability", availabilityRouter);
+apiRouter.use("/uploads", uploadsRouter);

@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #f7f7f8;
+  --foreground: #17181a;
+  --muted: #6b7280;
+  --border: #e6e7eb;
+  --primary: #17181a;
+  --primary-foreground: #ffffff;
+  --accent: #d8232a;
+  --accent-foreground: #ffffff;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/*
+ * CutZone brand is a light, white theme (see reference design) — kept as
+ * the only theme intentionally rather than following prefers-color-scheme,
+ * since the client explicitly wants the app to always look like the brand
+ * reference, not flip to a different look for dark-mode system users.
+ */
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Sizing is always set per-usage via Tailwind classes on MapContainer
+   (e.g. h-72, h-full) — only set the background here, not width/height,
+   since a plain .leaflet-container rule can win a specificity tie against
+   those utility classes and collapse the map to 0px. */
+.leaflet-container {
+  background: var(--surface-muted);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.user-location-pulse {
+  animation: pulse-ring 1.8s ease-out infinite;
+}

@@ -2,6 +2,12 @@ import { z } from "zod";
 import { BookingStatus } from "@prisma/client";
 import { dateSchema, uuidSchema } from "./common";
 
+export const quoteBookingQuerySchema = z.object({
+  salonId: uuidSchema,
+  serviceId: uuidSchema,
+  couponId: uuidSchema.optional(),
+});
+
 export const createBookingSchema = z.object({
   salonId: uuidSchema,
   barberId: uuidSchema,

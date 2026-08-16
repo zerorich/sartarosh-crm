@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -13,7 +15,7 @@ export function createApp() {
   const app = express();
 
   app.set("trust proxy", 1);
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
   app.use(
     cors({
       origin: corsOrigins,
@@ -23,6 +25,10 @@ export function createApp() {
   app.use(express.json({ limit: "100kb" }));
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+
+  const uploadsDir = path.join(__dirname, "../uploads");
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  app.use("/uploads", express.static(uploadsDir, { maxAge: "7d" }));
 
   app.use(createApiRateLimiter());
 

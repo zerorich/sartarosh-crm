@@ -27,11 +27,13 @@ export const nearbySalonsSchema = z.object({
   lat: latSchema,
   lng: lngSchema,
   radius: z.coerce.number().positive().max(100).optional(),
+  search: z.string().trim().min(1).max(120).optional(),
 });
 
 export const listSalonsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().trim().min(1).max(120).optional(),
 });
 
 export { workingHourSchema };
