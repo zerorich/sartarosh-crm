@@ -14,6 +14,11 @@ export const getMyCoupons = asyncHandler(async (req: Request, res: Response) => 
   return ok(res, coupons);
 });
 
+export const getMyReviews = asyncHandler(async (req: Request, res: Response) => {
+  const reviews = await userService.getMyReviews(req.user!.id);
+  return ok(res, reviews);
+});
+
 export const getMySavedSalons = asyncHandler(async (req: Request, res: Response) => {
   const salons = await userService.listSavedSalons(req.user!.id);
   return ok(res, salons);

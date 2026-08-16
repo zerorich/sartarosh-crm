@@ -3,6 +3,7 @@ import {
   deleteSavedSalon,
   getMe,
   getMyCoupons,
+  getMyReviews,
   getMySavedSalons,
   putSavedSalon,
 } from "../controllers/user.controller";
@@ -47,6 +48,23 @@ usersRouter.get("/me", getMe);
  *               $ref: '#/components/schemas/Success'
  */
 usersRouter.get("/me/coupons", getMyCoupons);
+
+/**
+ * @openapi
+ * /api/users/me/reviews:
+ *   get:
+ *     tags: [Users]
+ *     summary: List reviews written by the current client
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200:
+ *         description: My reviews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
+usersRouter.get("/me/reviews", getMyReviews);
 
 /**
  * @openapi

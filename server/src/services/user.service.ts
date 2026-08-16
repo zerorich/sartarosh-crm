@@ -25,6 +25,18 @@ export async function getMe(userId: string) {
   return sanitizeUser(user);
 }
 
+export async function getMyReviews(clientId: string) {
+  return prisma.review.findMany({
+    where: { clientId, isHidden: false },
+    orderBy: { createdAt: "desc" },
+    include: {
+      salon: { select: { id: true, name: true } },
+      barber: { select: { id: true, user: { select: { firstName: true, lastName: true } } } },
+      service: { select: { id: true, name: true } },
+    },
+  });
+}
+
 export async function getMyCoupons(clientId: string) {
   return prisma.coupon.findMany({
     where: { clientId, usedAt: null, expiresAt: { gt: new Date() } },
