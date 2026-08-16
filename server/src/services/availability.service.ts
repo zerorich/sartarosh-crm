@@ -125,6 +125,11 @@ export interface AvailableSlot {
 
 const ACTIVE_STATUSES = ["PENDING", "CONFIRMED", "ARRIVED", "IN_PROGRESS"] as const;
 
+function parseHm(value: string): [number, number] {
+  const [h, m] = value.split(":");
+  return [Number(h ?? 0), Number(m ?? 0)];
+}
+
 /**
  * Enumerates bookable slots for a given calendar day, applying the same
  * salon/barber-hours + blocked-time + overlap rules as assertSlotAvailable,
@@ -174,11 +179,11 @@ export async function getAvailableSlots(input: AvailableSlotsInput): Promise<Ava
   const slots: AvailableSlot[] = [];
 
   for (const window of barberDay) {
-    const [startH, startM] = window.startTime.split(":").map(Number);
-    const [endH, endM] = window.endTime.split(":").map(Number);
     const windowStart = new Date(dayStart);
+    const [startH, startM] = parseHm(window.startTime);
     windowStart.setHours(startH, startM, 0, 0);
     const windowEnd = new Date(dayStart);
+    const [endH, endM] = parseHm(window.endTime);
     windowEnd.setHours(endH, endM, 0, 0);
 
     for (

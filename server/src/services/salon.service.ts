@@ -1,6 +1,6 @@
 import type { DepositType, Prisma } from "@prisma/client";
 import { prisma } from "../config/prisma";
-import { salonRepository } from "../repositories/salon.repository";
+import { salonRepository, searchWhere } from "../repositories/salon.repository";
 import { workingHourRepository } from "../repositories/working-hour.repository";
 import { getSettings } from "./settings.service";
 import { AppError } from "../utils/app-error";
@@ -80,11 +80,21 @@ export async function listSalons(
   page: number,
   limit: number,
   user?: { role: string; ownerProfileId?: string },
+  search?: string,
 ) {
   const { skip, take } = paginationArgs(page, limit);
 
   if (user?.role === "OWNER" && user.ownerProfileId) {
-    const where = { ownerId: user.ownerProfileId };
+    const where = { ownerId: user.ownerProfileId, ...(search ? searchWhere(search) : {}) };
+    const [items, total] = await Promise.all([
+      salonRepository.findMany(where, skip, take),
+      salonRepository.count(where),
+    ]);
+    return { items, page, limit, total };
+  }
+
+  if (search) {
+    const where = { status: "ACTIVE" as const, ...searchWhere(search) };
     const [items, total] = await Promise.all([
       salonRepository.findMany(where, skip, take),
       salonRepository.count(where),
@@ -111,13 +121,15 @@ export async function listSalons(
   return result;
 }
 
-export async function findNearbySalons(lat: number, lng: number, radiusKm?: number) {
+export async function findNearbySalons(lat: number, lng: number, radiusKm?: number, search?: string) {
   const settings = await getSettings();
   const radius = radiusKm ?? settings.defaultSearchRadius;
   const cacheKey = CACHE_KEYS.salonNearby(lat, lng, radius);
-  const cached = await cacheGet<
-    Array<Awaited<ReturnType<typeof salonRepository.findInBoundingBox>>[number] & { distanceKm: number }>
-  >(cacheKey);
+  const cached = !search
+    ? await cacheGet<
+        Array<Awaited<ReturnType<typeof salonRepository.findInBoundingBox>>[number] & { distanceKm: number }>
+      >(cacheKey)
+    : null;
   if (cached) return cached;
 
   const box = boundingBox(lat, lng, radius);
@@ -128,6 +140,7 @@ export async function findNearbySalons(lat: number, lng: number, radiusKm?: numb
     box.minLng,
     box.maxLng,
     "ACTIVE",
+    search,
   );
 
   const result = candidates
@@ -138,7 +151,9 @@ export async function findNearbySalons(lat: number, lng: number, radiusKm?: numb
     .filter((s) => s.distanceKm <= radius)
     .sort((a, b) => a.distanceKm - b.distanceKm);
 
-  await cacheSet(cacheKey, result, CACHE_TTL.salonPublic);
+  if (!search) {
+    await cacheSet(cacheKey, result, CACHE_TTL.salonPublic);
+  }
   return result;
 }
 

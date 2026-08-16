@@ -58,6 +58,7 @@ describe("SalonService.findNearbySalons", () => {
       expect.any(Number),
       expect.any(Number),
       "ACTIVE",
+      undefined,
     );
   });
 

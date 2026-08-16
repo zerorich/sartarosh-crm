@@ -14,14 +14,19 @@ export const createSalon = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const listSalons = asyncHandler(async (req: Request, res: Response) => {
-  const { page, limit } = routeQuery<{ page: number; limit: number }>(req);
-  const result = await salonService.listSalons(page, limit, req.user);
+  const { page, limit, search } = routeQuery<{ page: number; limit: number; search?: string }>(req);
+  const result = await salonService.listSalons(page, limit, req.user, search);
   return paginated(res, result);
 });
 
 export const nearbySalons = asyncHandler(async (req: Request, res: Response) => {
-  const { lat, lng, radius } = routeQuery<{ lat: number; lng: number; radius?: number }>(req);
-  const salons = await salonService.findNearbySalons(lat, lng, radius);
+  const { lat, lng, radius, search } = routeQuery<{
+    lat: number;
+    lng: number;
+    radius?: number;
+    search?: string;
+  }>(req);
+  const salons = await salonService.findNearbySalons(lat, lng, radius, search);
   return ok(res, salons);
 });
 
