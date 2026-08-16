@@ -20,12 +20,16 @@ const envSchema = z.object({
   STORAGE_URL: z.string().optional().default(""),
   STORAGE_KEY: z.string().optional().default(""),
   STORAGE_SECRET: z.string().optional().default(""),
-  /** Gmail account used to send OTP emails (optional in dev/test). */
+  /** Gmail account used to send OTP emails (optional in dev/test; SMTP is blocked on Railway Hobby). */
   GMAIL_USER: z.string().optional().default(""),
   /** Gmail App Password for SMTP (optional in dev/test). */
   GMAIL_APP_PASSWORD: z.string().optional().default(""),
-  /** From address for outgoing mail; defaults to GMAIL_USER. */
+  /** From address for Gmail SMTP; defaults to GMAIL_USER. */
   SMTP_FROM: z.string().optional().default(""),
+  /** Resend API key — HTTPS mail, required on Railway Hobby where outbound SMTP is blocked. */
+  RESEND_API_KEY: z.string().optional().default(""),
+  /** Verified Resend from, e.g. Sartarosh <hello@yourdomain.com>. Defaults to onboarding@resend.dev. */
+  RESEND_FROM: z.string().optional().default(""),
   /** Base URL this API is reachable at — used to build absolute /uploads/* links. */
   PUBLIC_URL: z.string().default("http://localhost:4000"),
 });
