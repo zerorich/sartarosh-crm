@@ -5,7 +5,7 @@ export interface BarberUser {
   firstName: string | null;
   lastName: string | null;
   avatarUrl: string | null;
-  phone: string;
+  email: string;
 }
 
 export interface Barber {
